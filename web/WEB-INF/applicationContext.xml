@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+          p:location="/WEB-INF/jdbc.properties" />
+
+    <bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+          p:driverClassName="${jdbc.driverClassName}"
+          p:url="${jdbc.url}"
+          p:username="${jdbc.username}"
+          p:password="${jdbc.password}" />
+
+    <!-- ADD PERSISTENCE SUPPORT HERE (jpa, hibernate, etc) -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <bean id="categoriesDAO" class="com.models.CategoriesDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="discountDAO" class="com.models.DiscountDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="offersDAO" class="com.models.OffersDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="brandsDAO" class="com.models.BrandsDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="productsDAO" class="com.models.ProductsDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="categoryDetailsDAO" class="com.models.CategoryDetailsDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="notificationsDAO" class="com.models.NotificationsDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="ordersDAO" class="com.models.OrdersDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="feedbackDAO" class="com.models.FeedbackDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="employeeResponseDAO" class="com.models.EmployeeResponseDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="salesReportDAO" class="com.models.SalesReportDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+
+    <bean id="returnrequestresponseDAO" class="com.models.ReturnRequestResponseDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="supportDAO" class="com.models.SupportDAOImpl">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+    <bean id="discountClientDAO" class="com.models.DiscountClientDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="productsClientDAO" class="com.models.ProductsClientDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="ordersDTODAO" class="com.models.OrdersDTODAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="orderDetailsDTODAO" class="com.models.OrderDetailsDTODAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="orderDetailsDAO" class="com.models.OrderDetailsDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="accountsDAO" class="com.models.AccountsDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    
+    <bean id="voucherDAO" class="com.models.VoucherDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    <bean id="accountVoucherDAO" class="com.models.AccountVoucherDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    <bean id="empScheduleAndSalaryDAOImpl" class="com.models.EmpScheduleAndSalaryDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    
+    <bean id="salaryDAO" class="com.models.SalaryDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="shiftDAO" class="com.models.ShiftDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="dayOfWeekDAO" class="com.models.DayOfWeekDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="weekScheduleDAO" class="com.models.WeekScheduleDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="weekDetailsDAO" class="com.models.WeekDetailsDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="ShipperScheduleAndSalaryDAO" class="com.models.ShipperScheduleAndSalaryDAOImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="multipartResolver"   
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/> 
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.gmail.com" />
+        <property name="port" value="587" />
+        <property name="username" value="nguyenbao0654@gmail.com" />
+        <property name="password" value="yapq rroh vwnp fsdg"/> 
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.transport.protocol">smtp</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.smtp.ssl.trust">smtp.gmail.com</prop>
+                <prop key="mail.smtp.connectiontimeout">5000</prop>
+                <prop key="mail.smtp.timeout">5000</prop>
+                <prop key="mail.smtp.writetimeout">5000</prop>
+            </props>
+        </property>
+
+    </bean>
+
+
+</beans>
+
+
