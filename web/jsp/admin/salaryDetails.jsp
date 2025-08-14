@@ -1,0 +1,375 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+        <meta name="author" content="AdminKit">
+        <meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link rel="shortcut icon" type="image/x-icon" href="../assets/client/images/NestMart_icon.png" />
+        <link href="https://unpkg.com/feather-icons@latest/dist/feather.css" rel="stylesheet">
+
+        <link rel="canonical" href="https://demo-basic.adminkit.io/pages-blank.html" />
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.css">
+
+        <title>NestMart - Salary Details</title>
+
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/admin/css/app.css" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <style>
+            body{
+                font-family:"Inter","Helvetica Neue",Arial,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+                font-size: 14px;
+            }
+            .search-container {
+                display: flex;
+                align-items: center;
+                margin-bottom: 20px;
+                width: 100%;
+            }
+            .search-input {
+                flex: 1;
+                height: 45px;
+                padding: 0 10px;
+                border-radius: 20px 0 0 20px;
+                border: 1px solid #ced4da;
+                border-right: none;
+                font-size: 16px;
+            }
+            .search-button {
+                height: 45px;
+                width: 65px;
+                border-radius: 0 20px 20px 0;
+                border: 1px solid #ced4da;
+                border-left: none;
+                background-color: #f1f1f1;
+                color: #333;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                margin-right: 15px;
+            }
+            .search-button i {
+                font-size: 20px;
+            }
+            .search-button:hover {
+                background-color: #e0e0e0;
+            }
+            .icon-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .icon-container .btn {
+                background-color: #f1f1f1;
+                border: none;
+                color: #333;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 24px;
+                transition: background-color 0.3s, box-shadow 0.3s;
+                margin-top: -22px;
+            }
+            .icon-container .btn:hover {
+                background-color: #e0e0e0;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            .table-actions {
+                position: relative;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 5px;
+            }
+            .table-actions .btn {
+                background-color: transparent;
+                border: none;
+                cursor: pointer;
+                font-size: 20.5px;
+                padding: 5px;
+                transition: background-color 0.3s, box-shadow 0.3s;
+            }
+            .table-actions .btn-update {
+                color: #007bff;
+            }
+            .table-actions .btn-delete {
+                color: #dc3545;
+            }
+            .table-actions .btn:hover {
+                background-color: #f0f0f0;
+                box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+            }
+            .table-actions .btn-update:hover {
+                color: #0056b3;
+            }
+            .table-actions .btn-delete:hover {
+                color: #c82333;
+            }
+            tr {
+                position: relative;
+            }
+            .table td {
+                vertical-align: middle; /* Center-align text vertically in table cells */
+            }
+            .export-btn {
+                background: linear-gradient(45deg, #28a745, #20c997);
+                border: none;
+                color: white;
+                padding: 10px 20px;
+                border-radius: 8px;
+                font-weight: 500;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+            }
+            .export-btn:hover {
+                background: linear-gradient(45deg, #218838, #1ba582);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+                color: white;
+                text-decoration: none;
+            }
+            .export-btn i {
+                font-size: 16px;
+            }
+            .header-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <c:if test="${param.sessionExpired}">
+            <div style="color: red;">
+                Your session has expired. Please log in again.
+            </div>
+        </c:if>
+        <div class="wrapper">
+            <nav id="sidebar" class="sidebar js-sidebar">
+                <div class="sidebar-content js-simplebar">
+                    <div class="sidebar-brand">
+                        <span class="align-middle">Nestmart</span>
+                    </div>
+
+                    <ul class="sidebar-nav">
+                        <li class="sidebar-header">
+                            Pages
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="account.htm" >
+                                <i class="align-middle me-2" data-feather="users"></i> <span class="align-middle">Account</span>
+
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="products.htm">
+                                <i class="align-middle" data-feather="box"></i> <span class="align-middle">Product</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="brand.htm">
+                                <i class="align-middle" data-feather="bold"></i> <span class="align-middle">Brand</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="categories.htm">
+                                <i class="align-middle" data-feather="list"></i> <span class="align-middle">Category</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="categoryDetail.htm">
+                                <i class="align-middle" data-feather="clipboard"></i> <span class="align-middle">Category Detail</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item ">
+                            <a class="sidebar-link" href="discount.htm">
+                                <i class="align-middle" data-feather="check-circle"></i> <span class="align-middle">Discount</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="offers.htm">
+                                <i class="align-middle" data-feather="percent"></i> <span class="align-middle">Offers</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="schedule.htm">
+                                <i class="align-middle" data-feather="calendar"></i> <span class="align-middle">Schedule</span>
+                            </a>
+                        </li>
+
+
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="inventory.htm">
+                                <i class="align-middle" data-feather="package"></i> <span class="align-middle">Inventory</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="viewFeedbackAd.htm">
+                                <i class="align-middle" data-feather="feather"></i> <span class="align-middle">Feedback</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link active" href="salary.htm">
+                                <i class="align-middle" data-feather="user-check"></i> <span class="align-middle">Salary</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="notifications.htm">
+                                <i class="align-middle" data-feather="navigation"></i> <span class="align-middle">Notification</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="salesReport.htm" >
+                                <i class="align-middle me-2" data-feather="pie-chart"></i> <span class="align-middle">Sale Report</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="main">
+                <nav class="navbar navbar-expand navbar-light navbar-bg" style="padding: 14px 22px">
+                    <a class="sidebar-toggle js-sidebar-toggle">
+                        <i class="hamburger align-self-center"></i>
+                    </a>
+
+                    <div class="navbar-collapse collapse">
+                        <ul class="navbar-nav navbar-align">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+                                    <span class="text-dark">${sessionScope.email}</span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/admin/accountInformation.htm">
+                                        <i class="fa fa-user"></i> Account Information
+                                    </a>
+                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/admin/changePassword.htm">
+                                        <i class="fa fa-user"></i> Change Password
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/logout.htm">
+                                        <i class="align-middle me-1" data-feather="log-out"></i> Log out
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <main class="content">
+                    <div class="container mt-5">
+                        <div class="header-actions">
+                            <h1>Salary Details for the Week: <i>${weekSchedule.weekStartDate} to ${weekSchedule.weekEndDate}</i></h1>
+                            
+                            <!-- Nút Export CSV -->
+                            <a href="${pageContext.request.contextPath}/admin/exportSalaryCSV.htm?weekScheduleID=${weekSchedule.weekScheduleID}" 
+                               class="export-btn">
+                                <i data-feather="download"></i>
+                                Export CSV
+                            </a>
+                        </div>
+                        
+                        <div class="table-hover">
+                            <table class="table table-bordered ">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Employee ID</th>
+                                        <th>Full Name</th>
+                                        <th>Hourly Rate</th>
+                                        <th>Total Hours</th>
+                                        <th>Total Salary</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="salary" items="${salaryDetails}">
+                                        <tr>
+                                            <td>${salary.accountID}</td>
+                                            <td>${salary.fullName}</td>
+                                            <td>${salary.hourlyRate}</td>
+                                            <td>${salary.totalHours}</td>
+                                            <td>${salary.totalSalary}</td>
+                                        </tr>
+                                    </c:forEach>
+                                    <c:if test="${empty salaryDetails}">
+                                        <tr>
+                                            <td colspan="5" class="text-center">No salary details available for this week.</td>
+                                        </tr>
+                                    </c:if>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <h2>Total Hours Worked: <span class="text-primary">${totalHours}</span></h2>
+                            <h2>Total Salary for the Week: <span class="text-success">${totalSalary}</span></h2>
+                            <a href="../admin/salary.htm" class="btn btn-secondary">Back</a>
+                        </div>
+                    </div>
+                </main>
+
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.2/feather.min.js"></script>
+        <script src="${pageContext.request.contextPath}/asset/admin/js/app.js"></script>
+        <script>
+            feather.replace();
+        </script>
+        <script>
+            feather.replace();
+        </script>
+        <script src="../assets/admin/js/app.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let totalHours = document.getElementById('totalHours');
+                let hourlyRate = document.getElementById('hourlyRate');
+                let totalSalary = document.getElementById('totalSalary');
+
+                function calculateTotalSalary() {
+                    let hours = parseFloat(totalHours.value) || 0;
+                    let rate = parseFloat(hourlyRate.value) || 0;
+                    totalSalary.value = hours * rate;
+                }
+
+                totalHours.addEventListener('input', calculateTotalSalary);
+                hourlyRate.addEventListener('input', calculateTotalSalary);
+            });
+        </script>
+    </body>
+</html>
