@@ -61,7 +61,7 @@ public class ShippersController {
 
         return "/shipper/shippers";
     }
-
+//
     // Display shipper schedule and salary page
     @RequestMapping("/scheduleAndSalary")
     public String showScheduleAndSalaryPage(@RequestParam(value = "startMonth", required = false) Integer startMonth,
