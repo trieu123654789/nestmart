@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -308,5 +309,145 @@ public class ShippersController {
         } catch (Exception e) {
             return "error";
         }
+    }
+
+    // Export week schedule to CSV
+    @RequestMapping(value = "/exportWeekCSV.htm", method = RequestMethod.GET)
+    public void exportWeekCSV(@RequestParam("weekScheduleID") int weekScheduleID,
+                              HttpServletResponse response,
+                              HttpSession session) throws IOException {
+        String redirect = RoleUtils.checkRoleAndRedirect(session, null, 3);
+        if (redirect != null) {
+            response.sendRedirect("/nestmart/login.htm");
+            return;
+        }
+
+        Integer shipperID = (Integer) session.getAttribute("accountId");
+        
+        try {
+            // Get week schedule details
+            List<WeekDetails> weekDetails = scheduleAndSalaryDAO.getShipperWeekDetails(shipperID, weekScheduleID);
+            WeekSalaryDTO weekSalary = scheduleAndSalaryDAO.getShipperWeekSalary(shipperID, weekScheduleID);
+            
+            // Set response headers for CSV download
+            response.setContentType("text/csv; charset=UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            
+            String filename = String.format("Shipper_Week_Schedule_%d_%s.csv", 
+                    weekScheduleID, LocalDate.now().toString());
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+            
+            PrintWriter writer = response.getWriter();
+            writer.write('\uFEFF'); // BOM for UTF-8
+            
+            // Write CSV header
+            writer.println("===============================================");
+            writer.println("           SHIPPER WEEKLY SCHEDULE");
+            writer.println("===============================================");
+            writer.println("Shipper ID: " + shipperID);
+            writer.println("Week Schedule ID: " + weekScheduleID);
+            writer.println("Generated: " + LocalDate.now());
+            writer.println("===============================================");
+            writer.println();
+            
+            if (weekDetails != null && !weekDetails.isEmpty()) {
+                writer.println("Day ID,Shift ID,Overtime Hours,Status");
+                writer.println("─────────────────────────────────────────");
+                
+                for (WeekDetails detail : weekDetails) {
+                    writer.printf("%d,%d,%.1f,%s%n",
+                            detail.getDayID(),
+                            detail.getShiftID(),
+                            detail.getOvertimeHours() != null ? detail.getOvertimeHours().doubleValue() : 0.0,
+                            detail.getStatus() != null ? detail.getStatus() : "Scheduled");
+                }
+                
+                writer.println();
+                writer.println("===============================================");
+                writer.println("                SALARY SUMMARY");
+                writer.println("===============================================");
+                
+                if (weekSalary != null) {
+                    writer.println("Total Salary: $" + (weekSalary.getTotalSalary() != null ? weekSalary.getTotalSalary() : "0.00"));
+                    writer.println("Total Overtime Hours: " + (weekSalary.getTotalOvertimeHours() != null ? weekSalary.getTotalOvertimeHours() : "0.0"));
+                    writer.println("Total Overtime Salary: $" + (weekSalary.getTotalOvertimeSalary() != null ? weekSalary.getTotalOvertimeSalary() : "0.00"));
+                } else {
+                    writer.println("No salary data available for this week.");
+                }
+            } else {
+                writer.println("No schedule details found for this week.");
+            }
+            
+            writer.println();
+            writer.println("===============================================");
+            writer.println("              END OF REPORT");
+            writer.println("===============================================");
+            
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                    "Error generating CSV: " + e.getMessage());
+        }
+    }
+
+    // Print week payroll
+    @RequestMapping(value = "/printWeekPayroll.htm", method = RequestMethod.GET)
+    public String printWeekPayroll(@RequestParam("weekScheduleID") int weekScheduleID,
+                                   Model model,
+                                   HttpSession session,
+                                   RedirectAttributes redirectAttributes) {
+        String redirect = RoleUtils.checkRoleAndRedirect(session, redirectAttributes, 3);
+        if (redirect != null) return redirect;
+
+        Integer shipperID = (Integer) session.getAttribute("accountId");
+        String shipperEmail = (String) session.getAttribute("email");
+        
+        try {
+            // Get week schedule information
+            WeekSchedule schedule = scheduleAndSalaryDAO.getWeekScheduleById(weekScheduleID);
+            
+            // Get week schedule details
+            List<WeekDetails> weekDetails = scheduleAndSalaryDAO.getShipperWeekDetails(shipperID, weekScheduleID);
+            WeekSalaryDTO weekSalary = scheduleAndSalaryDAO.getShipperWeekSalary(shipperID, weekScheduleID);
+            
+            // Get performance metrics
+            int totalWorkingHours = scheduleAndSalaryDAO.getTotalWorkingHours(shipperID, weekScheduleID);
+            int totalOrdersDelivered = scheduleAndSalaryDAO.getTotalOrdersDelivered(shipperID, weekScheduleID);
+            
+            // Calculate salary components
+            BigDecimal basicSalary = weekSalary != null ? weekSalary.getTotalSalary() : BigDecimal.ZERO;
+            BigDecimal overtimeHours = BigDecimal.ZERO;
+            BigDecimal overtimePay = BigDecimal.ZERO;
+            BigDecimal totalSalary = basicSalary;
+            
+            if (weekSalary != null) {
+                overtimeHours = weekSalary.getTotalOvertimeHours() != null ? weekSalary.getTotalOvertimeHours() : BigDecimal.ZERO;
+                overtimePay = weekSalary.getTotalOvertimeSalary() != null ? weekSalary.getTotalOvertimeSalary() : BigDecimal.ZERO;
+                totalSalary = basicSalary.add(overtimePay);
+            }
+            
+            // Set model attributes to match JSP expectations
+            model.addAttribute("schedule", schedule);
+            model.addAttribute("shipperID", shipperID);
+            model.addAttribute("shipperEmail", shipperEmail != null ? shipperEmail : "N/A");
+            model.addAttribute("reportDate", LocalDate.now());
+            model.addAttribute("paymentDate", LocalDate.now().plusDays(7)); // Payment 1 week after report
+            
+            // Performance metrics
+            model.addAttribute("totalWorkingHours", totalWorkingHours);
+            model.addAttribute("ordersDelivered", totalOrdersDelivered);
+            model.addAttribute("overtimeHours", overtimeHours);
+            
+            // Salary breakdown
+            model.addAttribute("basicSalary", basicSalary);
+            model.addAttribute("overtimePay", overtimePay);
+            model.addAttribute("totalSalary", totalSalary);
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Error loading payroll data: " + e.getMessage());
+        }
+        
+        return "/shipper/printWeekPayroll";
     }
 }

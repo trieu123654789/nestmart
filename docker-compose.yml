@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: nestmart-sqlserver
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: "YourStrong@Passw0rd"
+      MSSQL_PID: Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - nestmart-network
+    restart: unless-stopped
+
+  # NestMart Application
+  nestmart-app:
+    build: .
+    container_name: nestmart-app
+    ports:
+      - "8080:8080"
+      - "4848:4848"  # GlassFish Admin Console
+    environment:
+      - DB_HOST=sqlserver
+      - DB_PORT=1433
+      - DB_NAME=nestmart_db
+      - DB_USER=sa
+      - DB_PASSWORD=YourStrong@Passw0rd
+    depends_on:
+      - sqlserver
+    networks:
+      - nestmart-network
+    restart: unless-stopped
+    volumes:
+      - app_logs:/opt/glassfish/glassfish/domains/domain1/logs
+
+volumes:
+  sqlserver_data:
+  app_logs:
+
+networks:
+  nestmart-network:
+    driver: bridge
