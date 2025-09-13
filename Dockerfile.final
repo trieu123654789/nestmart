@@ -1,0 +1,18 @@
+# Use Payara Server (GlassFish alternative) as base image
+FROM payara/server-full:latest
+
+# Copy the WAR file to the deployments directory
+COPY dist/nestmartappFinal.war ${PAYARA_DIR}/glassfish/domains/domain1/autodeploy/
+
+# Copy configuration files if they exist
+# Note: These may not exist, so we'll skip them for now
+
+# Expose HTTP and admin console ports
+EXPOSE 8080 4848 8181
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
+  CMD curl -f http://localhost:8080/nestmartappFinal/ || exit 1
+
+# Start Payara server
+CMD ["${PAYARA_DIR}/bin/asadmin", "start-domain", "--verbose"]

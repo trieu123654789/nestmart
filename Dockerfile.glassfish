@@ -1,0 +1,36 @@
+# Use airhacks GlassFish image which is maintained
+FROM airhacks/glassfish
+
+# Set working directory
+WORKDIR /app
+
+# Copy the pre-built WAR file
+COPY dist/nestmartappFinal.war /app/nestmartappFinal.war
+
+# Copy properties/configs
+COPY web/WEB-INF/application.properties /app/application.properties
+COPY web/WEB-INF/jdbc.properties /app/jdbc.properties
+
+# Set environment variables
+ENV GLASSFISH_HOME=/opt/glassfish4
+ENV PATH=$PATH:$GLASSFISH_HOME/bin
+
+# Create password file for deployment
+RUN echo "AS_ADMIN_PASSWORD=" > /tmp/glassfishpwd
+
+# Deploy WAR to GlassFish
+RUN $GLASSFISH_HOME/bin/asadmin start-domain && \
+    $GLASSFISH_HOME/bin/asadmin --user admin --passwordfile /tmp/glassfishpwd deploy \
+    --contextroot /nestmart /app/nestmartappFinal.war && \
+    $GLASSFISH_HOME/bin/asadmin stop-domain && \
+    rm /tmp/glassfishpwd
+
+# Expose ports
+EXPOSE 8080 4848 8181
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
+  CMD curl -f http://localhost:8080/nestmart/ || exit 1
+
+# Start GlassFish
+CMD ["asadmin", "start-domain", "--verbose"]

@@ -1,41 +1,37 @@
 # Use OpenJDK 8 base image
 FROM openjdk:8-jdk-alpine
 
-# Install necessary tools: ant + wget + unzip
-RUN apk add --no-cache ant curl wget unzip
+# Install necessary tools
+RUN apk add --no-cache curl wget unzip
 
 # Set working directory
 WORKDIR /app
 
-# Copy source code into container
-COPY . .
-
-# Build WAR using Ant
-RUN ant dist
-
-# Install GlassFish
+# Install GlassFish - using archive.eclipse.org mirror
 ENV GLASSFISH_VERSION=5.1.0
 RUN wget -O /tmp/glassfish-${GLASSFISH_VERSION}.zip \
-    https://download.eclipse.org/ee4j/glassfish/glassfish-${GLASSFISH_VERSION}.zip && \
+    https://archive.eclipse.org/ee4j/glassfish/glassfish-${GLASSFISH_VERSION}.zip && \
     unzip /tmp/glassfish-${GLASSFISH_VERSION}.zip -d /opt && \
     mv /opt/glassfish5 /opt/glassfish && \
     rm /tmp/glassfish-${GLASSFISH_VERSION}.zip
 
 ENV GLASSFISH_HOME=/opt/glassfish
 ENV PATH=$PATH:$GLASSFISH_HOME/bin
-ENV AS_ADMIN_PASSWORD=""
 
-# Copy properties/configs (nếu cần)
+# Copy the pre-built WAR file
+COPY dist/nestmartappFinal.war /app/nestmartappFinal.war
+
+# Copy properties/configs
 COPY web/WEB-INF/application.properties /app/application.properties
 COPY web/WEB-INF/jdbc.properties /app/jdbc.properties
 
-# Create password file
+# Create password file for GlassFish admin
 RUN echo "AS_ADMIN_PASSWORD=" > /tmp/glassfishpwd
 
 # Deploy WAR to GlassFish
 RUN $GLASSFISH_HOME/bin/asadmin start-domain && \
     $GLASSFISH_HOME/bin/asadmin --user admin --passwordfile /tmp/glassfishpwd deploy \
-    --contextroot /nestmart /app/dist/nestmartappFinal.war && \
+    --contextroot /nestmart /app/nestmartappFinal.war && \
     $GLASSFISH_HOME/bin/asadmin stop-domain && \
     rm /tmp/glassfishpwd
 
