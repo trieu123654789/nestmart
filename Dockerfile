@@ -1,50 +1,30 @@
-# Use Eclipse Temurin 8 with Alpine (more recent Alpine version)
-FROM eclipse-temurin:8-jdk-alpine
+# Use official Tomcat image with JDK 8
+FROM tomcat:9.0-jdk8-openjdk-slim
 
-# Install necessary tools: ant + wget + unzip
-RUN apk add --no-cache apache-ant curl wget unzip
+# Remove default Tomcat applications
+RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Install GlassFish first (needed for build classpath)
-ENV GLASSFISH_VERSION=6.2.5
-RUN wget -O /tmp/glassfish-${GLASSFISH_VERSION}.zip \
-    https://download.eclipse.org/ee4j/glassfish/glassfish-${GLASSFISH_VERSION}.zip && \
-    unzip /tmp/glassfish-${GLASSFISH_VERSION}.zip -d /opt && \
-    mv /opt/glassfish5 /opt/glassfish && \
-    rm /tmp/glassfish-${GLASSFISH_VERSION}.zip
+# Install curl for health checks and wget for downloading dependencies
+RUN apt-get update && apt-get install -y curl wget && rm -rf /var/lib/apt/lists/*
 
-ENV GLASSFISH_HOME=/opt/glassfish
-ENV PATH=$PATH:$GLASSFISH_HOME/bin
-ENV AS_ADMIN_PASSWORD=""
+# Download and add JavaMail API and Activation Framework (required for mail functionality)
+RUN wget -O /usr/local/tomcat/lib/javax.mail-1.6.2.jar \
+    https://repo1.maven.org/maven2/com/sun/mail/javax.mail/1.6.2/javax.mail-1.6.2.jar && \
+    wget -O /usr/local/tomcat/lib/activation-1.1.1.jar \
+    https://repo1.maven.org/maven2/javax/activation/activation/1.1.1/activation-1.1.1.jar
 
-# Set working directory
-WORKDIR /app
+# Copy the pre-built WAR file
+COPY nestmartappFinal.war /usr/local/tomcat/webapps/nestmart.war
 
-# Copy source code into container
-COPY . .
-
-# Build WAR using Ant (with GlassFish server home set)
-RUN ant -Dj2ee.server.home=$GLASSFISH_HOME dist
-
-# Copy properties/configs (nếu cần)
+# Copy configuration files
 COPY web/WEB-INF/application.properties /app/application.properties
 COPY web/WEB-INF/jdbc.properties /app/jdbc.properties
 
-# Create password file
-RUN echo "AS_ADMIN_PASSWORD=" > /tmp/glassfishpwd
-
-# Deploy WAR to GlassFish
-RUN $GLASSFISH_HOME/bin/asadmin start-domain && \
-    $GLASSFISH_HOME/bin/asadmin --user admin --passwordfile /tmp/glassfishpwd deploy \
-    --contextroot /nestmart /app/dist/nestmartappFinal.war && \
-    $GLASSFISH_HOME/bin/asadmin stop-domain && \
-    rm /tmp/glassfishpwd
-
-# Expose ports
-EXPOSE 8080 4848 8181
+# Expose port
+EXPOSE 8080
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:8080/nestmart/ || exit 1
 
-# Start GlassFish
-CMD ["asadmin", "start-domain", "--verbose"]
+# Start Tomcat (default CMD from base image)
