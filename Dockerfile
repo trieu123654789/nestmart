@@ -1,4 +1,4 @@
-# Windows-specific Docker fix for WAR file issues
+# Working Dockerfile for Windows Docker Desktop
 FROM tomcat:9.0-jdk8-openjdk-slim
 
 # Remove default Tomcat applications
@@ -13,28 +13,17 @@ RUN wget -O /usr/local/tomcat/lib/javax.mail-1.6.2.jar \
     wget -O /usr/local/tomcat/lib/activation-1.1.1.jar \
     https://repo1.maven.org/maven2/javax/activation/activation/1.1.1/activation-1.1.1.jar
 
-# Create a temporary directory and copy all files first
-COPY . /tmp/build-context/
+# Copy the WAR file directly (this works on Windows Docker Desktop)
+COPY nestmartappFinal.war /usr/local/tomcat/webapps/nestmart.war
 
-# Then move the WAR file from the copied context
-RUN if [ -f /tmp/build-context/nestmartappFinal.war ]; then \
-        cp /tmp/build-context/nestmartappFinal.war /usr/local/tomcat/webapps/nestmart.war; \
-        ls -la /usr/local/tomcat/webapps/nestmart.war; \
-    else \
-        echo "ERROR: WAR file not found in build context"; \
-        ls -la /tmp/build-context/; \
-        exit 1; \
-    fi
+# Verify the WAR file was copied correctly
+RUN ls -la /usr/local/tomcat/webapps/nestmart.war && \
+    echo "WAR file size: $(stat -c%s /usr/local/tomcat/webapps/nestmart.war) bytes"
 
-# Copy configuration files
-RUN if [ -d /tmp/build-context/web/WEB-INF ]; then \
-        mkdir -p /app && \
-        cp /tmp/build-context/web/WEB-INF/application.properties /app/application.properties 2>/dev/null || echo "application.properties not found"; \
-        cp /tmp/build-context/web/WEB-INF/jdbc.properties /app/jdbc.properties 2>/dev/null || echo "jdbc.properties not found"; \
-    fi
-
-# Clean up
-RUN rm -rf /tmp/build-context
+# Copy configuration files (create directory first)
+RUN mkdir -p /app
+COPY web/WEB-INF/application.properties /app/application.properties
+COPY web/WEB-INF/jdbc.properties /app/jdbc.properties
 
 # Expose port
 EXPOSE 8080
