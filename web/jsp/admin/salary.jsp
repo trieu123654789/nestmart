@@ -265,25 +265,22 @@
                         </ul>
                     </div>
                 </nav>
-                <div class="main">
-                    <nav class="navbar navbar-expand navbar-light navbar-bg">
-                        <!-- Navbar content -->
-                    </nav>
-
-                    <main class="content">
+                
+                <main class="content">
                         <div class="container mt-4">
                             <h2>Salary Overview</h2>
                             <div class="table-hover">
                                 <table class="table table-bordered ">
                                     <thead class="table-light">
-                                    <th>Week Start Date - End Date</th>
-                                    <th>Total Hours Worked</th>
-                                    <th>Total Overtime Hours</th>
-                                    <th>Total Overtime Salary</th>
-                                    <th>Total Salary</th>
-                                    <th>Payment Date</th>
-                                    <th>View Details</th>
-                                    </tr>
+                                        <tr>
+                                            <th>Week Start Date - End Date</th>
+                                            <th>Total Hours Worked</th>
+                                            <th>Total Overtime Hours</th>
+                                            <th>Total Overtime Salary</th>
+                                            <th>Total Salary</th>
+                                            <th>Payment Date</th>
+                                            <th>View Details</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
                                         <c:forEach var="week" items="${weekSalaryList}">
@@ -328,8 +325,8 @@
                             </ul>
                         </nav>
                     </main>
-                </div>
             </div>
+        </div>
             <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
