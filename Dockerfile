@@ -14,7 +14,7 @@ RUN wget -O /usr/local/tomcat/lib/javax.mail-1.6.2.jar \
     https://repo1.maven.org/maven2/javax/activation/activation/1.1.1/activation-1.1.1.jar
 
 # Copy the WAR file directly (this works on Windows Docker Desktop)
-COPY nestmartappFinal.war /usr/local/tomcat/webapps/nestmart.war
+COPY dist/nestmartappFinal.war /usr/local/tomcat/webapps/nestmart.war
 
 # Verify the WAR file was copied correctly
 RUN ls -la /usr/local/tomcat/webapps/nestmart.war && \
