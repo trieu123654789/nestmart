@@ -1,0 +1,36 @@
+# Fixed GlassFish Dockerfile
+FROM eclipse-temurin:8-jdk-alpine
+
+# Install required packages
+RUN apk add --no-cache wget unzip
+
+# Set GlassFish version and installation path
+ENV GLASSFISH_VERSION=6.2.5
+ENV GLASSFISH_HOME=/opt/glassfish
+
+# Download and install GlassFish 6.2.5 (extracts as glassfish6, not glassfish5)
+RUN wget -O /tmp/glassfish-${GLASSFISH_VERSION}.zip \
+    https://download.eclipse.org/ee4j/glassfish/glassfish-${GLASSFISH_VERSION}.zip && \
+    unzip /tmp/glassfish-${GLASSFISH_VERSION}.zip -d /opt && \
+    mv /opt/glassfish6 /opt/glassfish && \
+    rm /tmp/glassfish-${GLASSFISH_VERSION}.zip
+
+# Copy the pre-built WAR file
+COPY nestmartappFinal.war /opt/glassfish/glassfish/domains/domain1/autodeploy/
+
+# Copy configuration files
+COPY config/ /opt/glassfish/glassfish/domains/domain1/config/
+
+# Set environment variables
+ENV PATH="${PATH}:/opt/glassfish/bin"
+ENV JAVA_OPTS="-Xmx1024m -Xms512m"
+
+# Expose GlassFish ports
+EXPOSE 8080 4848 8181
+
+# Add health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/nestmart/ || exit 1
+
+# Start GlassFish
+CMD ["asadmin", "start-domain", "--verbose", "domain1"]
