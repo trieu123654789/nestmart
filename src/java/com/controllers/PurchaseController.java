@@ -39,7 +39,7 @@ public class PurchaseController {
                                    Model model, 
                                    RedirectAttributes redirectAttributes) {
 
-        String redirect = RoleUtils.checkRoleAndRedirect(session, redirectAttributes, 2);
+        String redirect = RoleUtils.checkRoleAndRedirect(session, redirectAttributes, 4);
         if (redirect != null) return redirect;
 
         String fullName = (String) session.getAttribute("fullName");
