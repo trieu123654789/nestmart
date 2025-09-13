@@ -1,0 +1,3 @@
+FROM alpine:latest
+COPY nestmartappFinal.war /tmp/test.war
+RUN ls -la /tmp/test.war
