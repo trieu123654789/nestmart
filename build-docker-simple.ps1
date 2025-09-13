@@ -17,11 +17,8 @@ if (!(Test-Path $warFile)) {
 $warInfo = Get-Item $warFile
 Write-Host "Found WAR file: $($warInfo.Name) ($([math]::Round($warInfo.Length / 1MB, 2)) MB)" -ForegroundColor Green
 
-# Build Docker image
-$buildArgs = @("build", "-t", "$ImageName`:$Tag")
-if ($NoCache) {
-    $buildArgs += "--no-cache"
-}
+# Build Docker image (use no-cache by default for reliability)
+$buildArgs = @("build", "-t", "$ImageName`:$Tag", "--no-cache")
 $buildArgs += "."
 
 Write-Host "Building Docker image..." -ForegroundColor Blue
