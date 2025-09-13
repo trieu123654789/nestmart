@@ -1,4 +1,4 @@
-# Working Dockerfile for Windows Docker Desktop
+# Dockerfile optimized for Railway deployment
 FROM tomcat:9.0-jdk8-openjdk-slim
 
 # Remove default Tomcat applications
@@ -13,24 +13,28 @@ RUN wget -O /usr/local/tomcat/lib/javax.mail-1.6.2.jar \
     wget -O /usr/local/tomcat/lib/activation-1.1.1.jar \
     https://repo1.maven.org/maven2/javax/activation/activation/1.1.1/activation-1.1.1.jar
 
-# Copy the WAR file directly (this works on Windows Docker Desktop)
+# Add SQL Server JDBC driver for Azure SQL Database
+RUN wget -O /usr/local/tomcat/lib/mssql-jdbc-12.4.2.jre8.jar \
+    https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/12.4.2.jre8/mssql-jdbc-12.4.2.jre8.jar
+
+# Copy the WAR file
 COPY dist/nestmartappFinal.war /usr/local/tomcat/webapps/nestmart.war
 
 # Verify the WAR file was copied correctly
 RUN ls -la /usr/local/tomcat/webapps/nestmart.war && \
     echo "WAR file size: $(stat -c%s /usr/local/tomcat/webapps/nestmart.war) bytes"
 
-# Copy configuration files (create directory first)
+# Copy configuration files
 RUN mkdir -p /app
 COPY web/WEB-INF/application.properties /app/application.properties
 COPY web/WEB-INF/jdbc.properties /app/jdbc.properties
 
-# Expose port
-EXPOSE 8080
+# Set environment variables for Railway
+ENV PORT=8080
+ENV JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD curl -f http://localhost:8080/nestmart/login.htm || exit 1
+# Expose port (Railway will override this with PORT env var)
+EXPOSE $PORT
 
 # Start Tomcat
 CMD ["catalina.sh", "run"]
