@@ -1,40 +1,47 @@
-# Multi-stage build - build WAR file first
-FROM adoptopenjdk/openjdk8:alpine-jre as builder
+# Use OpenJDK 8 base image
+FROM openjdk:8-jdk-alpine
 
-# Install build tools
-RUN apk add --no-cache wget unzip
+# Install basic tools
+RUN apk add --no-cache curl wget unzip
 
 # Install Apache Ant
 ENV ANT_VERSION=1.10.12
-RUN wget -O /tmp/ant.tar.gz https://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \
-    tar -xzf /tmp/ant.tar.gz -C /opt && \
+RUN wget -O /tmp/apache-ant-${ANT_VERSION}-bin.tar.gz \
+    https://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \
+    tar -xzf /tmp/apache-ant-${ANT_VERSION}-bin.tar.gz -C /opt && \
     mv /opt/apache-ant-${ANT_VERSION} /opt/ant && \
-    rm /tmp/ant.tar.gz
+    rm /tmp/apache-ant-${ANT_VERSION}-bin.tar.gz
 
 ENV ANT_HOME=/opt/ant
 ENV PATH=$PATH:$ANT_HOME/bin
 
-WORKDIR /build
+# Create a fake GlassFish directory structure for compilation
+RUN mkdir -p /opt/glassfish/modules
+ENV GLASSFISH_HOME=/opt/glassfish
+
+# Set working directory
+WORKDIR /app
+
+# Copy source code into container
 COPY . .
 
-# Create a minimal directory structure for GlassFish libraries (only what we need for compilation)
-RUN mkdir -p /opt/glassfish/modules && \
-    wget -O /opt/glassfish/modules/javax.servlet-api.jar https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar
+# Try to build the sources directly using javac first
+RUN javac -version
 
-# Try to build without full GlassFish - just compile classes
-RUN ant compile || true
+# Check what build targets are available
+RUN ant -p
 
-# Manually package WAR file
-RUN mkdir -p dist && \
-    cd web && \
-    jar -cvf ../dist/nestmartappFinal.war * -C ../build/web/WEB-INF/classes .
+# Try building with compile target instead of dist
+RUN ant compile || echo "Compile failed"
 
-# Final stage - use payara (GlassFish alternative) image
-FROM payara/micro:5.2022.3-jdk8
+# If dist requires server, try to build just the classes
+RUN find src -name "*.java" | head -10 || echo "No Java sources found"
 
-COPY --from=builder /build/dist/nestmartappFinal.war /opt/payara/deployments/
+# List project structure
+RUN ls -la
 
-# Expose port
-EXPOSE 8080
+# List web directory
+RUN ls -la web/ || echo "No web directory"
 
-CMD ["java", "-jar", "/opt/payara/payara-micro.jar", "--deploy", "/opt/payara/deployments/nestmartappFinal.war"]
+# Show what's in nbproject
+RUN cat nbproject/project.properties | grep -E "(dist|war|compile)" | head -20

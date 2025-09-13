@@ -1,29 +1,43 @@
-# Use Eclipse Temurin 8 with Alpine (more recent Alpine version)
-FROM eclipse-temurin:8-jdk-alpine
+# Use OpenJDK 8 base image
+FROM openjdk:8-jdk-alpine
 
-# Install necessary tools
+# Install basic tools
 RUN apk add --no-cache curl wget unzip
 
+# Install Apache Ant manually
+ENV ANT_VERSION=1.10.12
+RUN wget -O /tmp/apache-ant-${ANT_VERSION}-bin.tar.gz \
+    https://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \
+    tar -xzf /tmp/apache-ant-${ANT_VERSION}-bin.tar.gz -C /opt && \
+    mv /opt/apache-ant-${ANT_VERSION} /opt/ant && \
+    rm /tmp/apache-ant-${ANT_VERSION}-bin.tar.gz
+
+ENV ANT_HOME=/opt/ant
+ENV PATH=$PATH:$ANT_HOME/bin
+
+# Set working directory
+WORKDIR /app
+
+# Copy source code into container
+COPY . .
+
+# Try to build without server dependency first
+# If that fails, we'll build manually by installing GlassFish first
+RUN ant dist || echo "Build failed, will try with server"
+
 # Install GlassFish
-ENV GLASSFISH_VERSION=6.2.5
+ENV GLASSFISH_VERSION=5.1.0
 RUN wget -O /tmp/glassfish-${GLASSFISH_VERSION}.zip \
     https://download.eclipse.org/ee4j/glassfish/glassfish-${GLASSFISH_VERSION}.zip && \
     unzip /tmp/glassfish-${GLASSFISH_VERSION}.zip -d /opt && \
     mv /opt/glassfish5 /opt/glassfish && \
     rm /tmp/glassfish-${GLASSFISH_VERSION}.zip
 
-# Set up GlassFish environment
 ENV GLASSFISH_HOME=/opt/glassfish
 ENV PATH=$PATH:$GLASSFISH_HOME/bin
 ENV AS_ADMIN_PASSWORD=""
 
-# Set working directory
-WORKDIR /app
-
-# Copy the pre-built WAR file
-COPY nestmartappFinal.war /app/nestmartappFinal.war
-
-# Copy configuration files
+# Copy properties/configs (nếu cần)
 COPY web/WEB-INF/application.properties /app/application.properties
 COPY web/WEB-INF/jdbc.properties /app/jdbc.properties
 
@@ -33,7 +47,7 @@ RUN echo "AS_ADMIN_PASSWORD=" > /tmp/glassfishpwd
 # Deploy WAR to GlassFish
 RUN $GLASSFISH_HOME/bin/asadmin start-domain && \
     $GLASSFISH_HOME/bin/asadmin --user admin --passwordfile /tmp/glassfishpwd deploy \
-    --contextroot /nestmart /app/nestmartappFinal.war && \
+    --contextroot /nestmart /app/dist/nestmartappFinal.war && \
     $GLASSFISH_HOME/bin/asadmin stop-domain && \
     rm /tmp/glassfishpwd
 

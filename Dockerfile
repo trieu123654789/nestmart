@@ -1,20 +1,11 @@
-# Use OpenJDK 8 base image
-FROM openjdk:8-jdk-alpine
+# Use Eclipse Temurin 8 with Alpine (more recent Alpine version)
+FROM eclipse-temurin:8-jdk-alpine
 
 # Install necessary tools: ant + wget + unzip
-RUN apk add --no-cache ant curl wget unzip
+RUN apk add --no-cache apache-ant curl wget unzip
 
-# Set working directory
-WORKDIR /app
-
-# Copy source code into container
-COPY . .
-
-# Build WAR using Ant
-RUN ant dist
-
-# Install GlassFish
-ENV GLASSFISH_VERSION=5.1.0
+# Install GlassFish first (needed for build classpath)
+ENV GLASSFISH_VERSION=6.2.5
 RUN wget -O /tmp/glassfish-${GLASSFISH_VERSION}.zip \
     https://download.eclipse.org/ee4j/glassfish/glassfish-${GLASSFISH_VERSION}.zip && \
     unzip /tmp/glassfish-${GLASSFISH_VERSION}.zip -d /opt && \
@@ -24,6 +15,15 @@ RUN wget -O /tmp/glassfish-${GLASSFISH_VERSION}.zip \
 ENV GLASSFISH_HOME=/opt/glassfish
 ENV PATH=$PATH:$GLASSFISH_HOME/bin
 ENV AS_ADMIN_PASSWORD=""
+
+# Set working directory
+WORKDIR /app
+
+# Copy source code into container
+COPY . .
+
+# Build WAR using Ant (with GlassFish server home set)
+RUN ant -Dj2ee.server.home=$GLASSFISH_HOME dist
 
 # Copy properties/configs (nếu cần)
 COPY web/WEB-INF/application.properties /app/application.properties

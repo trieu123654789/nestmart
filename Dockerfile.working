@@ -2,28 +2,43 @@
 FROM eclipse-temurin:8-jdk-alpine
 
 # Install necessary tools
-RUN apk add --no-cache curl wget unzip
+RUN apk add --no-cache apache-ant curl wget unzip
 
-# Install GlassFish
-ENV GLASSFISH_VERSION=6.2.5
-RUN wget -O /tmp/glassfish-${GLASSFISH_VERSION}.zip \
-    https://download.eclipse.org/ee4j/glassfish/glassfish-${GLASSFISH_VERSION}.zip && \
-    unzip /tmp/glassfish-${GLASSFISH_VERSION}.zip -d /opt && \
-    mv /opt/glassfish5 /opt/glassfish && \
-    rm /tmp/glassfish-${GLASSFISH_VERSION}.zip
-
-# Set up GlassFish environment
+# Create a minimal GlassFish directory structure for build classpath
+RUN mkdir -p /opt/glassfish/modules
 ENV GLASSFISH_HOME=/opt/glassfish
-ENV PATH=$PATH:$GLASSFISH_HOME/bin
-ENV AS_ADMIN_PASSWORD=""
 
 # Set working directory
 WORKDIR /app
 
-# Copy the pre-built WAR file
-COPY nestmartappFinal.war /app/nestmartappFinal.war
+# Copy source code into container
+COPY . .
 
-# Copy configuration files
+# Build classes first (compile target works without full library resolution)
+RUN ant -Dj2ee.server.home=$GLASSFISH_HOME compile
+
+# Create WAR manually since dist target has library issues
+RUN mkdir -p /app/dist && \
+    mkdir -p /tmp/war/WEB-INF/classes && \
+    cp -r build/web/* /tmp/war/ && \
+    cd /tmp && \
+    jar -cvf /app/dist/nestmartappFinal.war -C war .
+
+# Install actual GlassFish for deployment
+ENV GLASSFISH_VERSION=6.2.5
+RUN wget -O /tmp/glassfish-${GLASSFISH_VERSION}.zip \
+    https://download.eclipse.org/ee4j/glassfish/glassfish-${GLASSFISH_VERSION}.zip && \
+    unzip /tmp/glassfish-${GLASSFISH_VERSION}.zip -d /opt && \
+    rm -rf /opt/glassfish && \
+    mv /opt/glassfish5 /opt/glassfish && \
+    rm /tmp/glassfish-${GLASSFISH_VERSION}.zip
+
+# Reset environment to point to real GlassFish
+ENV GLASSFISH_HOME=/opt/glassfish
+ENV PATH=$PATH:$GLASSFISH_HOME/bin
+ENV AS_ADMIN_PASSWORD=""
+
+# Copy properties/configs
 COPY web/WEB-INF/application.properties /app/application.properties
 COPY web/WEB-INF/jdbc.properties /app/jdbc.properties
 
@@ -33,7 +48,7 @@ RUN echo "AS_ADMIN_PASSWORD=" > /tmp/glassfishpwd
 # Deploy WAR to GlassFish
 RUN $GLASSFISH_HOME/bin/asadmin start-domain && \
     $GLASSFISH_HOME/bin/asadmin --user admin --passwordfile /tmp/glassfishpwd deploy \
-    --contextroot /nestmart /app/nestmartappFinal.war && \
+    --contextroot /nestmart /app/dist/nestmartappFinal.war && \
     $GLASSFISH_HOME/bin/asadmin stop-domain && \
     rm /tmp/glassfishpwd
 
