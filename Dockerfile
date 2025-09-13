@@ -34,7 +34,8 @@ ENV PORT=8080
 ENV JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 
 # Expose port (Railway will override this with PORT env var)
-EXPOSE $PORT
+EXPOSE 8080
+
 
 # Start Tomcat
 CMD ["catalina.sh", "run"]
