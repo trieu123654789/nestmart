@@ -1,0 +1,5 @@
+FROM alpine:latest
+RUN echo "Testing direct WAR file copy..."
+COPY nestmartappFinal.war /tmp/test.war
+RUN ls -la /tmp/test.war
+RUN echo "WAR file copy successful!"

@@ -1,0 +1,7 @@
+FROM alpine:latest
+# List all files in build context
+RUN echo "=== Build context contents ==="
+COPY . /tmp/context/
+RUN ls -la /tmp/context/
+RUN ls -la /tmp/context/*.war || echo "No WAR files found"
+RUN test -f /tmp/context/nestmartappFinal.war && echo "WAR file exists!" || echo "WAR file NOT found!"

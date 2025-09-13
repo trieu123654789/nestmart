@@ -1,0 +1,10 @@
+FROM alpine:latest
+COPY . /tmp/build-context/
+RUN echo "=== Build context contents ==="
+RUN ls -la /tmp/build-context/
+RUN echo "=== Looking for WAR files ==="
+RUN find /tmp/build-context/ -name "*.war" || echo "No WAR files found"
+RUN echo "=== Checking if specific WAR exists ==="
+RUN test -f /tmp/build-context/nestmartappFinal.war && echo "Found nestmartappFinal.war" || echo "nestmartappFinal.war NOT FOUND"
+RUN echo "=== File count and sizes ==="
+RUN find /tmp/build-context/ -type f -exec ls -lah {} \; | head -20
