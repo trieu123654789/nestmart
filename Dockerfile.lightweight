@@ -1,0 +1,48 @@
+# Use Eclipse Temurin 8 with Alpine
+FROM eclipse-temurin:8-jdk-alpine
+
+# Install necessary tools
+RUN apk add --no-cache apache-ant curl wget unzip
+
+# Create minimal directory structure for build
+RUN mkdir -p /opt/glassfish/modules
+ENV GLASSFISH_HOME=/opt/glassfish
+
+# Set working directory
+WORKDIR /app
+
+# Copy source code
+COPY . .
+
+# Build WAR using Ant with server home property
+RUN ant -Dj2ee.server.home=$GLASSFISH_HOME dist
+
+# Use a simple Java application server instead of full GlassFish
+# Install Tomcat as a lightweight alternative
+ENV TOMCAT_VERSION=9.0.82
+RUN wget -O /tmp/apache-tomcat-${TOMCAT_VERSION}.tar.gz \
+    https://archive.apache.org/dist/tomcat/tomcat-9/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz && \
+    tar -xzf /tmp/apache-tomcat-${TOMCAT_VERSION}.tar.gz -C /opt && \
+    mv /opt/apache-tomcat-${TOMCAT_VERSION} /opt/tomcat && \
+    rm /tmp/apache-tomcat-${TOMCAT_VERSION}.tar.gz
+
+# Set up Tomcat environment
+ENV CATALINA_HOME=/opt/tomcat
+ENV PATH=$PATH:$CATALINA_HOME/bin
+
+# Deploy WAR to Tomcat
+RUN cp dist/nestmartappFinal.war $CATALINA_HOME/webapps/nestmart.war
+
+# Copy configuration files
+COPY web/WEB-INF/application.properties /app/application.properties
+COPY web/WEB-INF/jdbc.properties /app/jdbc.properties
+
+# Expose port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:8080/nestmart/ || exit 1
+
+# Start Tomcat
+CMD ["catalina.sh", "run"]
