@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.multipart.MultipartFile;
@@ -412,10 +413,10 @@ public class FeedbackDAOImpl implements FeedbackDAO {
                 });
     }
 
-    // Get employee response for a specific feedback
+    // Get employee response for a specific feedback (most recent if multiple exist)
     @Override
     public EmployeeResponse getResponseByFeedbackId(int feedbackID) {
-        String query = "SELECT ResponseID, EmployeeID, FeedbackID, ResponseContent, ResponseDate FROM EmployeeResponse WHERE FeedbackID = ?";
+        String query = "SELECT TOP 1 ResponseID, EmployeeID, FeedbackID, ResponseContent, ResponseDate FROM EmployeeResponse WHERE FeedbackID = ? ORDER BY ResponseDate DESC";
         try {
             return jdbcTemplate.queryForObject(query, new Object[]{feedbackID}, (rs, rowNum) -> {
                 EmployeeResponse er = new EmployeeResponse();
@@ -436,6 +437,30 @@ public class FeedbackDAOImpl implements FeedbackDAO {
             });
         } catch (EmptyResultDataAccessException e) {
             return null;
+        } catch (IncorrectResultSizeDataAccessException e) {
+            // Fallback: use query method to get first result if TOP 1 doesn't work as expected
+            List<EmployeeResponse> responses = jdbcTemplate.query(
+                "SELECT ResponseID, EmployeeID, FeedbackID, ResponseContent, ResponseDate FROM EmployeeResponse WHERE FeedbackID = ? ORDER BY ResponseDate DESC",
+                new Object[]{feedbackID},
+                (rs, rowNum) -> {
+                    EmployeeResponse er = new EmployeeResponse();
+                    er.setResponseID(rs.getInt("ResponseID"));
+                    er.setEmployeeID(rs.getInt("EmployeeID"));
+                    er.setFeedbackID(rs.getInt("FeedbackID"));
+                    er.setResponseContent(rs.getString("ResponseContent"));
+                    Timestamp timestamp = rs.getTimestamp("ResponseDate");
+                    if (timestamp != null) {
+                        LocalDateTime responseDate = timestamp.toLocalDateTime();
+                        er.setResponseDate(responseDate);
+
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        String formattedResponseDate = responseDate.format(formatter);
+                        er.setFormattedResponseDate(formattedResponseDate);
+                    }
+                    return er;
+                }
+            );
+            return responses.isEmpty() ? null : responses.get(0);
         }
     }
 

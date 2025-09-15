@@ -306,13 +306,6 @@
                             </a>
                         </li>
 
-
-
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="inventory.htm">
-                                <i class="align-middle" data-feather="package"></i> <span class="align-middle">Inventory</span>
-                            </a>
-                        </li>
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="viewFeedbackAd.htm">
                                 <i class="align-middle" data-feather="feather"></i> <span class="align-middle">Feedback</span>

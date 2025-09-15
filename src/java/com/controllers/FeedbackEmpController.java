@@ -43,7 +43,7 @@ public class FeedbackEmpController {
 
         HttpSession session = request.getSession(false);
         String redirect = RoleUtils.checkRoleAndRedirect(session, redirectAttributes, 2);
-        if (!redirect.isEmpty()) return redirect;
+        if (redirect != null && !redirect.isEmpty()) return redirect;
 
         if (page < 1) page = 1;
         if (pageSize < 5) pageSize = 5;
@@ -99,7 +99,7 @@ public class FeedbackEmpController {
     public String showResponseForm(@RequestParam("feedbackID") int feedbackID, ModelMap model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         HttpSession session = request.getSession(false);
         String redirect = RoleUtils.checkRoleAndRedirect(session, redirectAttributes, 2);
-        if (!redirect.isEmpty()) return redirect;
+        if (redirect != null && !redirect.isEmpty()) return redirect;
 
         Feedback fb = feedbackDAO.get(feedbackID);
         model.addAttribute("feedbackdetails", fb);
@@ -118,7 +118,7 @@ public class FeedbackEmpController {
 
         HttpSession session = request.getSession(false);
         String redirect = RoleUtils.checkRoleAndRedirect(session, redirectAttributes, 2);
-        if (!redirect.isEmpty()) return redirect;
+        if (redirect != null && !redirect.isEmpty()) return redirect;
 
         if (currentPage < 1) currentPage = 1;
         if (pageSize < 5) pageSize = 5;

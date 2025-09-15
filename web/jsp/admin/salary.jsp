@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.math.BigDecimal"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -204,22 +205,14 @@
                             </a>
                         </li>
 
-
-
-                        <li class="sidebar-item">
-                            <a class="sidebar-link" href="inventory.htm">
-                                <i class="align-middle" data-feather="package"></i> <span class="align-middle">Inventory</span>
-                            </a>
-                        </li>
-
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="viewFeedbackAd.htm">
                                 <i class="align-middle" data-feather="feather"></i> <span class="align-middle">Feedback</span>
                             </a>
                         </li>
 
-                        <li class="sidebar-item">
-                            <a class="sidebar-link active" href="salary.htm">
+                        <li class="sidebar-item active">
+                            <a class="sidebar-link " href="salary.htm">
                                 <i class="align-middle" data-feather="user-check"></i> <span class="align-middle">Salary</span>
                             </a>
                         </li>
@@ -291,9 +284,9 @@
                                                     <fmt:formatDate value="${week.weekEndDate}" pattern="yyyy/MM/dd"/>
                                                 </td>
                                                 <td>${week.totalHoursWorked}</td>
-                                                <td>${week.totalOvertimeHours != null ? week.totalOvertimeHours.setScale(2, BigDecimal.ROUND_HALF_UP) : '0.00'}</td>
-                                                <td>${week.totalOvertimeSalary != null ? week.totalOvertimeSalary.setScale(2, BigDecimal.ROUND_HALF_UP) : '0.00'}</td>
-                                                <td>${week.totalSalary != null ? week.totalSalary.setScale(2, BigDecimal.ROUND_HALF_UP) : '0.00'}</td>
+                                                <td><fmt:formatNumber value="${week.totalOvertimeHours}" pattern="0.00" /></td>
+                                                <td><fmt:formatNumber value="${week.totalOvertimeSalary}" pattern="0.00" /></td>
+                                                <td><fmt:formatNumber value="${week.totalSalary}" pattern="0.00" /></td>
                                                 <td>
                                                     <c:if test="${not empty week.salaryPaymentDate}">
                                                         <fmt:formatDate value="${week.salaryPaymentDate}" pattern="yyyy/MM/dd"/>
