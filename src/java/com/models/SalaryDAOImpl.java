@@ -93,15 +93,16 @@ public class SalaryDAOImpl implements SalaryDAO {
                 "ORDER BY a.fullName";
 
         return jdbcTemplate.query(sql, new Object[]{weekScheduleID}, (rs, rowNum) -> {
-            return new EmployeeSalaryDTO(
-                    rs.getInt("accountID"),
-                    rs.getString("employeeName"),
-                    rs.getBigDecimal("hourlyRate"),
-                    rs.getInt("totalHours"),
-                    rs.getBigDecimal("totalSalary"),
-                    rs.getInt("overtimeHours"),
-                    rs.getBigDecimal("overtimeSalary")
-            );
+            EmployeeSalaryDTO dto = new EmployeeSalaryDTO();
+            dto.setAccountID(rs.getInt("accountID"));
+            dto.setFullName(rs.getString("employeeName"));
+            dto.setHourlyRate(rs.getBigDecimal("hourlyRate"));
+            dto.setTotalHours(rs.getInt("totalHours"));
+            dto.setTotalSalary(rs.getBigDecimal("totalSalary"));
+            // Set default values for overtime since they're not in the query
+            dto.setOvertimeHours(0);
+            dto.setOvertimeSalary(BigDecimal.ZERO);
+            return dto;
         });
     }
 
@@ -117,15 +118,16 @@ public class SalaryDAOImpl implements SalaryDAO {
                 "GROUP BY a.accountID, a.fullName, a.hourlyRate";
 
         return jdbcTemplate.query(sql, new Object[]{weekScheduleID}, (rs, rowNum) -> {
-            return new EmployeeSalaryDTO(
-                    rs.getInt("accountID"),
-                    rs.getString("fullName"),
-                    rs.getBigDecimal("hourlyRate"),
-                    rs.getInt("totalHours"),
-                    rs.getBigDecimal("totalSalary"),
-                    rs.getInt("overtimeHours"),
-                    rs.getBigDecimal("overtimeSalary")
-            );
+            EmployeeSalaryDTO dto = new EmployeeSalaryDTO();
+            dto.setAccountID(rs.getInt("accountID"));
+            dto.setFullName(rs.getString("fullName"));
+            dto.setHourlyRate(rs.getBigDecimal("hourlyRate"));
+            dto.setTotalHours(rs.getInt("totalHours"));
+            dto.setTotalSalary(rs.getBigDecimal("totalSalary"));
+            // Set default values for overtime since they're not in the query
+            dto.setOvertimeHours(0);
+            dto.setOvertimeSalary(BigDecimal.ZERO);
+            return dto;
         });
     }
 

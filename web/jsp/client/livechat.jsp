@@ -861,6 +861,5 @@
                 scrollToBottom();
             };
         </script>
-        <jsp:include page="livechat.jsp" />
     </body>
 </html>

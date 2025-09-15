@@ -60,13 +60,8 @@ public class ScheduleController {
     @Autowired
     private SalaryDAO salaryDAO;
 
-    // Display list of week schedules with pagination
-    @RequestMapping(value = "/schedule", method = RequestMethod.GET)
-    public String getWeekScheduleList(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        HttpSession session = request.getSession(false);
-        String redirect = RoleUtils.checkRoleAndRedirect(session, redirectAttributes, 1);
-        if (redirect != null) return redirect;
-
+    // Helper method to load week schedules data
+    private void loadWeekSchedulesData(Model model, HttpServletRequest request) {
         int page = (request.getParameter("page") != null) ? Integer.parseInt(request.getParameter("page")) : 1;
         if (page < 1) page = 1;
         int pageSize = 10;
@@ -83,6 +78,16 @@ public class ScheduleController {
         model.addAttribute("weekSchedules", weekSchedules);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("currentPage", page);
+    }
+
+    // Display list of week schedules with pagination
+    @RequestMapping(value = "/schedule", method = RequestMethod.GET)
+    public String getWeekScheduleList(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        HttpSession session = request.getSession(false);
+        String redirect = RoleUtils.checkRoleAndRedirect(session, redirectAttributes, 1);
+        if (redirect != null) return redirect;
+
+        loadWeekSchedulesData(model, request);
         return "admin/schedule";
     }
 
@@ -180,17 +185,20 @@ public class ScheduleController {
 
         if (weekStartDate.isAfter(weekEndDate)) {
             model.addAttribute("error", "The start date cannot be after the end date.");
+            loadWeekSchedulesData(model, request);
             return "admin/schedule";
         }
 
         long daysBetween = ChronoUnit.DAYS.between(weekStartDate, weekEndDate) + 1;
         if (daysBetween != 7) {
             model.addAttribute("error", "A work week must have 7 days.");
+            loadWeekSchedulesData(model, request);
             return "admin/schedule";
         }
 
         if (weekScheduleDAO.isWeekScheduleExists(Date.valueOf(weekStartDate), Date.valueOf(weekEndDate))) {
             model.addAttribute("error", "The work schedule has existed for this period of time.");
+            loadWeekSchedulesData(model, request);
             return "admin/schedule";
         }
 

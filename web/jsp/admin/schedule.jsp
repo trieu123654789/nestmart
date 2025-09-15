@@ -208,12 +208,6 @@
 
 
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="inventory.htm">
-                                <i class="align-middle" data-feather="package"></i> <span class="align-middle">Inventory</span>
-                            </a>
-                        </li>
-
-                        <li class="sidebar-item">
                             <a class="sidebar-link" href="viewFeedbackAd.htm">
                                 <i class="align-middle" data-feather="feather"></i> <span class="align-middle">Feedback</span>
                             </a>
@@ -433,26 +427,16 @@
 
             </div>
          
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.2/feather.min.js"></script>
+        <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <!-- Bootstrap JavaScript -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+        <!-- Feather Icons -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.2/feather.min.js"></script>
 
-            <script src="../assets/admin/js/app.js"></script>
+        <script src="../assets/admin/js/app.js"></script>
             <script>
                                             feather.replace();
-            </script>
-            <script>
-                function openAssignShiftModal(weekDetailsID) {
-                    $('#weekDetailsID').val(weekDetailsID);
-                    $('#assignShiftModal').modal('show');
-                }
-            </script><script>
-                function openAssignShiftModal(weekDetailsID) {
-                    // Gán giá trị weekDetailsID vào input ẩn (nếu cần)
-                    document.getElementById('weekDetailsID').value = weekDetailsID;
-
-                    // Hiển thị modal phân ca
-                    var assignShiftModal = new bootstrap.Modal(document.getElementById('assignShiftModal'));
-                    assignShiftModal.show();
-                }
             </script>
     </body>
 </html>
