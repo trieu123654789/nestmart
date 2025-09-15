@@ -18,7 +18,7 @@ RUN wget -O /usr/local/tomcat/lib/mssql-jdbc-12.4.2.jre8.jar \
     https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/12.4.2.jre8/mssql-jdbc-12.4.2.jre8.jar
 
 # Copy the WAR file
-COPY dist/nestmartappFinal.war /usr/local/tomcat/webapps/nestmart.war
+COPY ../dist/nestmartappFinal.war /usr/local/tomcat/webapps/nestmart.war
 
 # Verify the WAR file was copied correctly
 RUN ls -la /usr/local/tomcat/webapps/nestmart.war && \
