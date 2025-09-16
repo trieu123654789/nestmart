@@ -5,7 +5,7 @@
   },
   "deploy": {
     "startCommand": "catalina.sh run",
-    "healthcheckPath": "/nestmart/login.htm",
+    "healthcheckPath": "/login.htm",
     "healthcheckTimeout": 100
   }
 }
