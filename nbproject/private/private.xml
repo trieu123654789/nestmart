@@ -11,7 +11,6 @@
             <file>file:/C:/Projects/trieuquocchau/web/WEB-INF/applicationContext.xml</file>
             <file>file:/C:/Projects/trieuquocchau/web/WEB-INF/jdbc.properties</file>
             <file>file:/C:/Projects/trieuquocchau/web/jsp/admin/salary.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/WEB-INF/glassfish-web.xml</file>
             <file>file:/C:/Projects/trieuquocchau/web/WEB-INF/dispatcher-servlet.xml</file>
         </group>
     </open-files>
