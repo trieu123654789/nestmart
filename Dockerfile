@@ -21,8 +21,8 @@ RUN wget -O /usr/local/tomcat/lib/mssql-jdbc-12.4.2.jre8.jar \
 COPY dist/nestmartappFinal.war /usr/local/tomcat/webapps/ROOT.war
 
 # Verify the WAR file was copied correctly
-RUN ls -la /usr/local/tomcat/webapps/nestmart.war && \
-    echo "WAR file size: $(stat -c%s /usr/local/tomcat/webapps/nestmart.war) bytes"
+RUN ls -la /usr/local/tomcat/webapps/ROOT.war && \
+    echo "WAR file size: $(stat -c%s /usr/local/tomcat/webapps/ROOT.war) bytes"
 
 # Copy configuration files
 RUN mkdir -p /app
