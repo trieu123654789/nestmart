@@ -1,5 +1,5 @@
 # Dockerfile optimized for Railway deployment
-FROM openjdk:8-jdk-slim AS builder
+FROM openjdk:8-jdk AS builder
 
 # Install tools needed to build the WAR manually
 RUN apt-get update && apt-get install -y wget bash && rm -rf /var/lib/apt/lists/*
