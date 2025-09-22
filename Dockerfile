@@ -1,4 +1,17 @@
 # Dockerfile optimized for Railway deployment
+FROM openjdk:8-jdk-slim AS builder
+
+# Install Ant to build the WAR from source
+RUN apt-get update && apt-get install -y ant wget unzip && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy source to build the WAR
+COPY . .
+
+# Build using Ant (outputs to dist/)
+RUN ant -f build.xml clean && ant -f build.xml
+
 FROM tomcat:9.0-jdk8-openjdk-slim
 
 # Remove default Tomcat applications
@@ -17,8 +30,8 @@ RUN wget -O /usr/local/tomcat/lib/javax.mail-1.6.2.jar \
 RUN wget -O /usr/local/tomcat/lib/mssql-jdbc-12.4.2.jre8.jar \
     https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/12.4.2.jre8/mssql-jdbc-12.4.2.jre8.jar
 
-# Copy the WAR file
-COPY dist/nestmartappFinal.war /usr/local/tomcat/webapps/nestmart.war
+# Copy the WAR file built in the builder stage
+COPY --from=builder /app/dist/nestmartappFinal.war /usr/local/tomcat/webapps/nestmart.war
 
 # Verify the WAR file was copied correctly
 RUN ls -la /usr/local/tomcat/webapps/nestmart.war && \
