@@ -37,6 +37,9 @@ services:
     restart: unless-stopped
     volumes:
       - app_logs:/opt/glassfish/glassfish/domains/domain1/logs
+      # Mount uploads directory to persist uploaded images
+      - ./uploads:/uploads
+      - ./web/assets/admin/images/uploads:/usr/local/tomcat/webapps/nestmart/assets/admin/images/uploads
 
 volumes:
   sqlserver_data:

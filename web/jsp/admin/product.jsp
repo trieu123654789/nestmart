@@ -143,22 +143,193 @@
             .image-container {
                 position: relative;
                 display: inline-block;
+                cursor: pointer;
             }
 
             .img-thumbnail {
                 display: block;
+                width: 60px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 4px;
+                border: 2px solid #ddd;
+                transition: transform 0.2s;
+            }
+
+            .img-thumbnail:hover {
+                transform: scale(1.05);
+                border-color: #007bff;
             }
 
             .image-count {
                 position: absolute;
-                top: 5px;
-                right: 5px;
-                background-color: rgba(0, 0, 0, 0.6);
+                top: -5px;
+                right: -5px;
+                background-color: #007bff;
                 color: white;
                 padding: 2px 6px;
-                border-radius: 50%;
-                font-size: 14px;
+                border-radius: 10px;
+                font-size: 10px;
                 font-weight: bold;
+                min-width: 18px;
+                text-align: center;
+            }
+
+            /* Image Modal styles */
+            .image-modal {
+                display: none;
+                position: fixed;
+                z-index: 9999;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.7);
+            }
+
+            .modal-content {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                border-radius: 10px;
+                width: 450px;
+                max-width: 90vw;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+                animation: modalSlideIn 0.3s ease-out;
+            }
+
+            @keyframes modalSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translate(-50%, -60%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translate(-50%, -50%);
+                }
+            }
+
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 20px;
+                border-bottom: 1px solid #eee;
+                border-radius: 10px 10px 0 0;
+                background: #f8f9fa;
+            }
+
+            .modal-title {
+                font-size: 16px;
+                font-weight: 600;
+                color: #333;
+            }
+
+            .close {
+                color: #666;
+                font-size: 24px;
+                font-weight: bold;
+                cursor: pointer;
+                line-height: 1;
+                padding: 0;
+                background: none;
+                border: none;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+            }
+
+            .close:hover {
+                background-color: #e9ecef;
+                color: #333;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-image-container {
+                position: relative;
+                text-align: center;
+                margin-bottom: 15px;
+            }
+
+            .modal-image {
+                max-width: 100%;
+                max-height: 300px;
+                object-fit: contain;
+                border-radius: 6px;
+                border: 1px solid #ddd;
+            }
+
+            .nav-button {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background-color: rgba(255, 255, 255, 0.9);
+                border: 1px solid #ddd;
+                border-radius: 50%;
+                width: 35px;
+                height: 35px;
+                cursor: pointer;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .nav-button:hover {
+                background-color: white;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            }
+
+            .prev-btn {
+                left: 10px;
+            }
+
+            .next-btn {
+                right: 10px;
+            }
+
+            .thumbnail-container {
+                display: flex;
+                justify-content: center;
+                gap: 8px;
+                flex-wrap: wrap;
+                max-height: 80px;
+                overflow-y: auto;
+            }
+
+            .thumbnail {
+                width: 50px;
+                height: 50px;
+                object-fit: cover;
+                border-radius: 4px;
+                cursor: pointer;
+                border: 2px solid transparent;
+                transition: border-color 0.2s;
+            }
+
+            .thumbnail:hover {
+                border-color: #007bff;
+            }
+
+            .thumbnail.active {
+                border-color: #007bff;
+            }
+
+            .no-images {
+                color: #6c757d;
+                font-style: italic;
+                font-size: 12px;
             }
 
             /*chuyentrang*/
@@ -415,22 +586,32 @@
                                             <c:choose>
                                                 <c:when test="${not empty product.images}">
                                                     <c:set var="imageCount" value="${fn:length(product.images)}" />
-                                                    <c:forEach var="image" items="${product.images}" varStatus="status">
-                                                        <c:if test="${status.index == 0}">
-                                                            <div class="image-container">
-                                                                <img src="../assets/admin/images/uploads/products/${image.images}"
-                                                                     alt="Product Image"
-                                                                     class="img-thumbnail"
-                                                                     loading="lazy">
-                                                                <c:if test="${imageCount > 1}">
-                                                                    <span class="image-count">+${imageCount - 1}</span>
-                                                                </c:if>
-                                                            </div>
-                                                        </c:if>
-                                                    </c:forEach>
+                                                    <div class="product-images-container">
+                                                        <div class="image-container" onclick="openImageModal('${product.productID}')">
+                                                            <img src="../assets/admin/images/uploads/products/${product.images[0].images}"
+                                                                 alt="Product Image"
+                                                                 class="img-thumbnail"
+                                                                 loading="lazy">
+                                                            <c:if test="${imageCount > 1}">
+                                                                <span class="image-count">+${imageCount - 1}</span>
+                                                            </c:if>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Hidden data for modal -->
+                                                    <script type="application/json" id="images-${product.productID}">
+                                                        [
+                                                        <c:forEach var="image" items="${product.images}" varStatus="status">
+                                                            {
+                                                            "src": "../assets/admin/images/uploads/products/${image.images}",
+                                                            "alt": "Product Image ${status.index + 1}"
+                                                            }<c:if test="${!status.last}">,</c:if>
+                                                        </c:forEach>
+                                                        ]
+                                                    </script>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    No image available
+                                                    <span class="no-images">No image available</span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
@@ -525,6 +706,28 @@
 
             </div>
         </div>
+
+        <!-- Image Modal -->
+        <div id="imageModal" class="image-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">Product Images</div>
+                    <span class="close" onclick="closeImageModal()">&times;</span>
+                </div>
+
+                <div class="modal-body">
+                    <div class="modal-image-container">
+                        <img id="modalImage" class="modal-image" src="" alt="">
+                        <button class="nav-button prev-btn" onclick="changeImage(-1)">&#8249;</button>
+                        <button class="nav-button next-btn" onclick="changeImage(1)">&#8250;</button>
+                    </div>
+
+                    <div class="thumbnail-container" id="thumbnailContainer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.2/feather.min.js"></script>
         <script>
                                                                feather.replace();
@@ -556,7 +759,125 @@
 
             document.addEventListener("DOMContentLoaded", function () {
                 let unitPriceInput = document.getElementById("unitPrice");
-                unitPriceInput.addEventListener("input", onInputChange);
+                if (unitPriceInput) {
+                    unitPriceInput.addEventListener("input", onInputChange);
+                }
+            });
+        </script>
+
+        <script>
+            // Image Gallery Functions
+            let currentImageIndex = 0;
+            let currentImages = [];
+
+            function openImageModal(productId) {
+                const imageData = document.getElementById('images-' + productId);
+                if (!imageData)
+                    return;
+
+                try {
+                    currentImages = JSON.parse(imageData.textContent);
+                    currentImageIndex = 0;
+
+                    displayImage(0);
+                    generateThumbnails();
+
+                    document.getElementById('imageModal').style.display = 'block';
+                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                } catch (e) {
+                    console.error('Error parsing image data:', e);
+                }
+            }
+
+            function closeImageModal() {
+                document.getElementById('imageModal').style.display = 'none';
+                document.body.style.overflow = 'auto'; // Restore scrolling
+            }
+
+            function displayImage(index) {
+                if (!currentImages || currentImages.length === 0)
+                    return;
+
+                const modalImage = document.getElementById('modalImage');
+
+                modalImage.src = currentImages[index].src;
+                modalImage.alt = currentImages[index].alt;
+
+                const thumbnails = document.querySelectorAll('.thumbnail');
+                thumbnails.forEach((thumb, i) => {
+                    thumb.classList.toggle('active', i === index);
+                });
+
+                const prevBtn = document.querySelector('.prev-btn');
+                const nextBtn = document.querySelector('.next-btn');
+
+                if (currentImages.length <= 1) {
+                    prevBtn.style.display = 'none';
+                    nextBtn.style.display = 'none';
+                } else {
+                    prevBtn.style.display = 'flex';
+                    nextBtn.style.display = 'flex';
+                }
+            }
+
+            function changeImage(direction) {
+                if (!currentImages || currentImages.length <= 1)
+                    return;
+
+                currentImageIndex += direction;
+
+                if (currentImageIndex < 0) {
+                    currentImageIndex = currentImages.length - 1;
+                } else if (currentImageIndex >= currentImages.length) {
+                    currentImageIndex = 0;
+                }
+
+                displayImage(currentImageIndex);
+            }
+
+            function generateThumbnails() {
+                const container = document.getElementById('thumbnailContainer');
+                container.innerHTML = '';
+
+                if (currentImages.length <= 1)
+                    return;
+
+                currentImages.forEach((image, index) => {
+                    const thumbnail = document.createElement('img');
+                    thumbnail.src = image.src;
+                    thumbnail.alt = image.alt;
+                    thumbnail.className = 'thumbnail';
+                    thumbnail.onclick = () => {
+                        currentImageIndex = index;
+                        displayImage(index);
+                    };
+                    container.appendChild(thumbnail);
+                });
+            }
+
+            // Close modal when clicking outside
+            document.getElementById('imageModal').onclick = function (event) {
+                if (event.target === this) {
+                    closeImageModal();
+                }
+            };
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function (event) {
+                const modal = document.getElementById('imageModal');
+                if (modal.style.display === 'block') {
+                    switch (event.key) {
+                        case 'Escape':
+                            closeImageModal();
+                            break;
+                        case 'ArrowLeft':
+                            changeImage(-1);
+                            break;
+                        case 'ArrowRight':
+                            changeImage(1);
+                            break;
+                    }
+                }
             });
         </script>
 

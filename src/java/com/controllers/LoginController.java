@@ -2,6 +2,7 @@ package com.controllers;
 
 import com.models.Accounts;
 import com.models.AccountsDAO;
+import com.services.PasswordService;
 import com.services.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/")
 public class LoginController {
 
+    @Autowired
+    private PasswordService passwordService;
+    
     @Autowired
     private AccountsDAO accountsDAO;
 
@@ -53,7 +57,8 @@ public class LoginController {
 
         Accounts account = accountsDAO.findByEmail(email);
 
-        if (account != null && password.equals(account.getPassword())) {
+        // Use PasswordService to verify password
+        if (account != null && passwordService.verifyPassword(password, account.getPassword())) {
             session.setAttribute("email", email);
             session.setAttribute("phoneNumber", account.getPhoneNumber());
             session.setAttribute("fullName", account.getFullName());

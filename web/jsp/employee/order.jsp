@@ -22,7 +22,7 @@
         <link rel="canonical" href="https://demo-basic.adminkit.io/pages-blank.html" />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.css">
-        <title>NestMart - Categories</title>
+        <title>NestMart - Orders</title>
 
         <link href="../assets/admin/css/app.css" rel="stylesheet"> 
 
@@ -294,7 +294,7 @@
                                 <span class="align-middle">Support Message</span>
                             </a>
                         </li>
-                         <li class="sidebar-item">
+                        <li class="sidebar-item">
                             <a class="sidebar-link" href="scheduleEmp.htm">
                                 <i class="align-middle me-2" data-feather="calendar"></i> 
                                 <span class="align-middle">Schedule</span>
@@ -389,11 +389,15 @@
                                         <td><c:out value="${order.phone}" /></td>
                                         <td><c:out value="${order.notes}" /></td>
                                         <td>
-                                            <fmt:formatNumber value="${order.totalAmount}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                            <fmt:formatNumber value="${order.totalAmount}" 
+                                                              type="number" 
+                                                              minFractionDigits="2" 
+                                                              maxFractionDigits="2" 
+                                                              groupingUsed="true" />$
                                         </td>
                                         <td><c:out value="${order.shippingAddress}" /></td>
                                         <td><c:out value="${order.paymentMethod}" /></td>
-                                        <td><c:out value="${order.formattedDate}" />                                        </td>
+                                        <td><c:out value="${order.formattedDate}" /></td>
 
                                         <td>
                                             <c:choose>
@@ -441,6 +445,7 @@
                                 </c:forEach>
                             </tbody>
                         </table>
+
                         <div class="pagination-container">
                             <nav aria-label="Page navigation">
                                 <ul class="pagination justify-content-center">

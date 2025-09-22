@@ -189,7 +189,7 @@
         .fa {
             font-family: FontAwesome !important;
         }
-        
+
         @media (max-width: 1200px) {
             .products-list {
                 grid-template-columns: repeat(4, 1fr);
@@ -424,8 +424,11 @@
                                             <div class="discount-section">
                                                 <h2 class="discount-name">${discount.discountName}</h2>
                                                 <h3 class="discount-description">${discount.description}</h3>
-                                                <div class="discount-dates">From <b>${discount.startDate}</b> to <b>${discount.endDate}</b></div>
-                                                <img src="${pageContext.request.contextPath}/assets/admin/images/uploads/discount/${discount.image}" alt="${discount.discountName}" class="discount-banner">
+                                                <div class="discount-dates">
+                                                    From <b>${discount.startDate}</b> to <b>${discount.endDate}</b>
+                                                </div>
+                                                <img src="${pageContext.request.contextPath}/assets/admin/images/uploads/discount/${discount.image}" 
+                                                     alt="${discount.discountName}" class="discount-banner">
 
                                                 <ul class="products-list">
                                                     <c:forEach items="${discount.products}" var="product">
@@ -439,7 +442,7 @@
                                                                                     <div class="image-container">
                                                                                         <a href="${pageContext.request.contextPath}/client/productDetails.htm?productID=${product.productID}" class="link-to-product">
                                                                                             <img src="${pageContext.request.contextPath}/assets/client/images/uploads/products/${image.images}" 
-                                                                                                 alt="${product.productName}" width="250" height="250" class="product-thumnail"/>
+                                                                                                 alt="${product.productName}" width="250" height="250" class="product-thumbnail"/>
                                                                                         </a>
                                                                                         <c:if test="${product.images.size() > 1}">
                                                                                             <span class="image-count">+${product.images.size() - 1}</span>
@@ -453,57 +456,59 @@
                                                                         </c:otherwise>
                                                                     </c:choose>
                                                                 </div>
+
                                                                 <div class="info">
                                                                     <h4 class="product-title">
-                                                                        <a href="${pageContext.request.contextPath}/client/productDetails.htm?productID=${product.productID}" class="pr-name">${product.productName}</a>
+                                                                        <a href="${pageContext.request.contextPath}/client/productDetails.htm?productID=${product.productID}" class="pr-name">
+                                                                            ${product.productName}
+                                                                        </a>
                                                                     </h4>
+
                                                                     <div class="price">
                                                                         <div class="product-price-container">
-                                                                            <c:if test="${product.quantity > 0}">
-                                                                                <c:choose>
-                                                                                    <c:when test="${product.discount > 0}">
-                                                                                        <p>
-                                                                                            <span class="original-price1">
-                                                                                                <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
-                                                                                            </span>
-                                                                                            <span class="discounted-price1">
-                                                                                                <fmt:formatNumber value="${product.discount}" type="number" maxFractionDigits="0" groupingUsed="true" />$
-                                                                                            </span>
-                                                                                        </p>
-                                                                                    </c:when>
-                                                                                    <c:otherwise>
-                                                                                        <p class="original-price2">
-                                                                                            <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
-                                                                                        </p>
-                                                                                    </c:otherwise>
-                                                                                </c:choose>
-                                                                                <div style="display: flex; align-items: center; justify-content: center;
-                                                                                     background-color: #f8f9fa; padding: 10px; border-radius: 5px;">
-                                                                                    <span class="badge bg-success" style="margin-right: 10px;">
-                                                                                        <c:choose>
-                                                                                            <c:when test="${product.averageRating > 0}">
-                                                                                                <fmt:formatNumber value="${product.averageRating}" type="number" maxFractionDigits="1" />
-                                                                                                <img src="../assets/client/images/star-16.png" alt="Feedback Star" style="vertical-align: middle;">
-                                                                                            </c:when>
-                                                                                            <c:otherwise>No feedback</c:otherwise>
-                                                                                        </c:choose>
-                                                                                    </span>
-                                                                                    <div style="width: 1px; height: 30px; background-color: #ccc; margin: 0 10px;"></div>
-                                                                                    <span class="badge bg-light">Sold: ${product.totalQuantitySold}</span>
-                                                                                </div>
-                                                                            </c:if>
+                                                                            <c:choose>
+                                                                                <c:when test="${product.quantity > 0}">
+                                                                                    <c:choose>
+                                                                                        <c:when test="${product.discount > 0}">
+                                                                                            <p>
+                                                                                                <span class="original-price1">
+                                                                                                    <fmt:formatNumber value="${product.unitPrice}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true"/>$
+                                                                                                </span>
+                                                                                                <span class="discounted-price1">
+                                                                                                    <fmt:formatNumber value="${product.discount}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true"/>$
+                                                                                                </span>
+                                                                                            </p>
+                                                                                        </c:when>
+                                                                                        <c:otherwise>
+                                                                                            <p class="original-price2">
+                                                                                                <fmt:formatNumber value="${product.unitPrice}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true"/>$
+                                                                                            </p>
+                                                                                        </c:otherwise>
+                                                                                    </c:choose>
 
-                                                                            <c:if test="${product.quantity == 0}">
-                                                                                <div style="margin-top: 65px">
-                                                                                    <c:if test="${product.quantity == 0}">
+                                                                                    <div style="display: flex; align-items: center; justify-content: center;
+                                                                                         background-color: #f8f9fa; padding: 10px; border-radius: 5px;">
+                                                                                        <span class="badge bg-success" style="margin-right: 10px;">
+                                                                                            <c:choose>
+                                                                                                <c:when test="${product.averageRating > 0}">
+                                                                                                    <fmt:formatNumber value="${product.averageRating}" type="number" maxFractionDigits="1"/>
+                                                                                                    <img src="${pageContext.request.contextPath}/assets/client/images/star-16.png" 
+                                                                                                         alt="Feedback Star" style="vertical-align: middle;">
+                                                                                                </c:when>
+                                                                                                <c:otherwise>No feedback</c:otherwise>
+                                                                                            </c:choose>
+                                                                                        </span>
+                                                                                        <div style="width: 1px; height: 30px; background-color: #ccc; margin: 0 10px;"></div>
+                                                                                        <span class="badge bg-light">Sold: ${product.totalQuantitySold}</span>
+                                                                                    </div>
+                                                                                </c:when>
+
+                                                                                <c:otherwise>
+                                                                                    <div style="margin-top: 65px">
                                                                                         <span class="sold-out-badge">SOLD OUT</span>
-                                                                                    </c:if>
-
-
-
-                                                                                </div>
-
-                                                                            </c:if>
+                                                                                    </div>
+                                                                                </c:otherwise>
+                                                                            </c:choose>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -512,19 +517,22 @@
                                                     </c:forEach>
                                                 </ul>
                                             </div>
+
                                             <div class="text-center" style="margin-top: 20px;">
-                                                <a href="../client/discountinfo.htm?discountID=${discount.discountID}" class="btnSeeOffers">
+                                                <a href="${pageContext.request.contextPath}/client/discountinfo.htm?discountID=${discount.discountID}" class="btnSeeOffers">
                                                     SEE MORE
                                                 </a>
                                             </div>
                                         </c:forEach>
                                     </c:when>
+
                                     <c:otherwise>
                                         <p style="text-align:center; margin:20px 0; color: gray; font-size: 20px">
                                             Currently no discounts available.
                                         </p>
                                     </c:otherwise>
                                 </c:choose>
+
                             </div>
                         </div>
 

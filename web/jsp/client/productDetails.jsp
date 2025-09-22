@@ -678,11 +678,11 @@
                                     <div class="col-md-6">
                                         <div class="product-image-container">
                                             <img id="mainImage" 
-                                                 src="../assets/client/images/uploads/products/${not empty product.images ? product.images[0].images : 'default.jpg'}" 
+                                                 src="../assets/admin/images/uploads/products/${not empty product.images ? product.images[0].images : 'default.jpg'}" 
                                                  alt="${product.productName}" class="product-image img-fluid">
                                             <div class="product-thumbnails">
                                                 <c:forEach var="image" items="${product.images}">
-                                                    <img src="../assets/client/images/uploads/products/${image.images}" 
+                                                    <img src="../assets/admin/images/uploads/products/${image.images}" 
                                                          alt="${product.productName}" class="thumbnail-image" 
                                                          onclick="changeImage(this.src)">
                                                 </c:forEach>
@@ -769,6 +769,11 @@
                                                         Add To Cart
                                                     </button>
                                             </div>
+                                        <c:if test="${not empty errorMessage}">
+                                            <div class="alert alert-danger" style="margin-top: 30px" role="alert">
+                                                ${errorMessage}
+                                            </div>
+                                        </c:if> 
                                         <c:if test="${not empty successMessage}">
                                             <div class="alert alert-success" style="margin-top: 30px" role="alert">
                                                 Product added to cart successfully!
@@ -992,7 +997,7 @@
                                                             <c:if test="${status.index == 0}">
                                                                 <div class="image-container">
                                                                     <a href="../client/productDetails.htm?productID=${product.productID}" class="link-to-product">
-                                                                        <img src="../assets/client/images/uploads/products/${image.images}" 
+                                                                        <img src="../assets/admin/images/uploads/products/${image.images}" 
                                                                              alt="${product.productName}" width="250" height="250" class="product-thumbnail1"/>
                                                                     </a>
 
@@ -1090,354 +1095,354 @@
 
 
         <script>
-                               function increaseQuantity() {
-                                   let input = document.getElementById("quantity");
-                                   let max = parseInt(input.getAttribute("data-max"));
-                                   let current = parseInt(input.value);
+                                                           function increaseQuantity() {
+                                                               let input = document.getElementById("quantity");
+                                                               let max = parseInt(input.getAttribute("data-max"));
+                                                               let current = parseInt(input.value);
 
-                                   if (current < max) {
-                                       input.value = current + 1;
-                                   }
-                                   if (current + 1 >= max) {
-                                       document.getElementById("btnUp").disabled = true;
-                                   }
-                               }
+                                                               if (current < max) {
+                                                                   input.value = current + 1;
+                                                               }
+                                                               if (current + 1 >= max) {
+                                                                   document.getElementById("btnUp").disabled = true;
+                                                               }
+                                                           }
 
-                               function decreaseQuantity() {
-                                   let input = document.getElementById("quantity");
-                                   let current = parseInt(input.value);
+                                                           function decreaseQuantity() {
+                                                               let input = document.getElementById("quantity");
+                                                               let current = parseInt(input.value);
 
-                                   if (current > 1) {
-                                       input.value = current - 1;
-                                       document.getElementById("btnUp").disabled = false;
-                                   }
-                               }
+                                                               if (current > 1) {
+                                                                   input.value = current - 1;
+                                                                   document.getElementById("btnUp").disabled = false;
+                                                               }
+                                                           }
 
 
-                               function changeImage(imageSrc) {
-                                   document.getElementById("mainImage").src = imageSrc;
-                               }
-                               fetch('/nestmartFinal/client/getFeedbacks?productID=fruit0002-4')
-                                       .then(res => res.json())
-                                       .then(data => {
-                                           let container = document.getElementById("feedbackContainer");
-                                           let dateStr = fb.createdAt; // ví dụ: "2025-08-20T14:33:25"
-                                           let date = new Date(dateStr);
-                                           let formattedDate = isNaN(date.getTime()) ? dateStr : date.toLocaleDateString();
-                                           container.innerHTML = "";
-                                           data.forEach(fb => {
-                                               container.innerHTML += `
+                                                           function changeImage(imageSrc) {
+                                                               document.getElementById("mainImage").src = imageSrc;
+                                                           }
+                                                           fetch('/nestmartFinal/client/getFeedbacks?productID=fruit0002-4')
+                                                                   .then(res => res.json())
+                                                                   .then(data => {
+                                                                       let container = document.getElementById("feedbackContainer");
+                                                                       let dateStr = fb.createdAt; // ví dụ: "2025-08-20T14:33:25"
+                                                                       let date = new Date(dateStr);
+                                                                       let formattedDate = isNaN(date.getTime()) ? dateStr : date.toLocaleDateString();
+                                                                       container.innerHTML = "";
+                                                                       data.forEach(fb => {
+                                                                           container.innerHTML += `
                                                             <div class="feedback">
                                                                 <strong>${fb.customerName}</strong>
                                                                 <small>${formattedDate}</small>
                                                                 <p>${fb.content}</p>
                                                             </div>
                                                         `;
-                                           });
-                                       })
-                                       .catch(err => console.error(err));
-                               function showLargeFeedbackImage(imgElement) {
-                                   const feedbackItem = imgElement.closest('.list-group-item');
-                                   let largeContainer = feedbackItem.querySelector('.main-large-image');
+                                                                       });
+                                                                   })
+                                                                   .catch(err => console.error(err));
+                                                           function showLargeFeedbackImage(imgElement) {
+                                                               const feedbackItem = imgElement.closest('.list-group-item');
+                                                               let largeContainer = feedbackItem.querySelector('.main-large-image');
 
-                                   if (!largeContainer) {
-                                       largeContainer = document.createElement('div');
-                                       largeContainer.className = 'main-large-image';
-                                       largeContainer.style.cssText = 'display:none; text-align: left; margin-top:20px; width:100%; clear:both;';
+                                                               if (!largeContainer) {
+                                                                   largeContainer = document.createElement('div');
+                                                                   largeContainer.className = 'main-large-image';
+                                                                   largeContainer.style.cssText = 'display:none; text-align: left; margin-top:20px; width:100%; clear:both;';
 
-                                       const largeImg = document.createElement('img');
-                                       largeImg.className = 'large-image';
-                                       largeImg.style.cssText = 'max-width: 400px; max-height: 300px; height:auto; border:1px solid #ccc; border-radius:8px; object-fit: contain;';
+                                                                   const largeImg = document.createElement('img');
+                                                                   largeImg.className = 'large-image';
+                                                                   largeImg.style.cssText = 'max-width: 400px; max-height: 300px; height:auto; border:1px solid #ccc; border-radius:8px; object-fit: contain;';
 
-                                       largeContainer.appendChild(largeImg);
-                                       feedbackItem.querySelector('.feedback-images-container').appendChild(largeContainer);
-                                   }
+                                                                   largeContainer.appendChild(largeImg);
+                                                                   feedbackItem.querySelector('.feedback-images-container').appendChild(largeContainer);
+                                                               }
 
-                                   const largeImg = largeContainer.querySelector('.large-image');
+                                                               const largeImg = largeContainer.querySelector('.large-image');
 
-                                   if (largeImg.src === imgElement.src && largeContainer.style.display === "block") {
-                                       largeContainer.style.display = "none";
-                                   } else {
-                                       largeImg.src = imgElement.src;
-                                       largeContainer.style.display = "block";
-                                   }
-                               }
-                               var productID = '${product.productID}';
-                               var currentStarFilter = ${starFilter != null ? starFilter : 0};
+                                                               if (largeImg.src === imgElement.src && largeContainer.style.display === "block") {
+                                                                   largeContainer.style.display = "none";
+                                                               } else {
+                                                                   largeImg.src = imgElement.src;
+                                                                   largeContainer.style.display = "block";
+                                                               }
+                                                           }
+                                                           var productID = '${product.productID}';
+                                                           var currentStarFilter = ${starFilter != null ? starFilter : 0};
 
-                               function filterFeedbacks(starRating) {
-                                   const feedbackContainer = document.getElementById('feedback-list');
-                                   feedbackContainer.innerHTML = '<div class="text-center"><p>Loading feedbacks...</p></div>';
+                                                           function filterFeedbacks(starRating) {
+                                                               const feedbackContainer = document.getElementById('feedback-list');
+                                                               feedbackContainer.innerHTML = '<div class="text-center"><p>Loading feedbacks...</p></div>';
 
-                                   const url = '../client/getFeedbacksFiltered.htm?productID=' + productID +
-                                           '&starFilter=' + (starRating || '') + '&page=1';
+                                                               const url = '../client/getFeedbacksFiltered.htm?productID=' + productID +
+                                                                       '&starFilter=' + (starRating || '') + '&page=1';
 
-                                   fetch(url)
-                                           .then(response => {
-                                               if (!response.ok) {
-                                                   throw new Error('Server responded with status: ' + response.status);
-                                               }
-                                               return response.text();
-                                           })
-                                           .then(responseText => {
-                                               const data = JSON.parse(responseText);
-                                               updateFeedbackDisplay(data);
-                                               updateActiveButton(starRating);
-                                           })
-                                           .catch(error => {
-                                               feedbackContainer.innerHTML =
-                                                       '<div class="alert alert-danger">' +
-                                                       '<h5>Error Loading Feedbacks</h5>' +
-                                                       '<p>Error: ' + error.message + '</p>' +
-                                                       '<button class="btn btn-primary btn-sm" onclick="location.reload()">Refresh Page</button>' +
-                                                       '</div>';
-                                           });
-                               }
+                                                               fetch(url)
+                                                                       .then(response => {
+                                                                           if (!response.ok) {
+                                                                               throw new Error('Server responded with status: ' + response.status);
+                                                                           }
+                                                                           return response.text();
+                                                                       })
+                                                                       .then(responseText => {
+                                                                           const data = JSON.parse(responseText);
+                                                                           updateFeedbackDisplay(data);
+                                                                           updateActiveButton(starRating);
+                                                                       })
+                                                                       .catch(error => {
+                                                                           feedbackContainer.innerHTML =
+                                                                                   '<div class="alert alert-danger">' +
+                                                                                   '<h5>Error Loading Feedbacks</h5>' +
+                                                                                   '<p>Error: ' + error.message + '</p>' +
+                                                                                   '<button class="btn btn-primary btn-sm" onclick="location.reload()">Refresh Page</button>' +
+                                                                                   '</div>';
+                                                                       });
+                                                           }
 
-                               function loadFeedbackPage(page, starFilter) {
-                                   const feedbackContainer = document.getElementById('feedback-list');
-                                   feedbackContainer.innerHTML = '<div class="text-center"><p>Loading page ' + page + '...</p></div>';
+                                                           function loadFeedbackPage(page, starFilter) {
+                                                               const feedbackContainer = document.getElementById('feedback-list');
+                                                               feedbackContainer.innerHTML = '<div class="text-center"><p>Loading page ' + page + '...</p></div>';
 
-                                   const url = '../client/getFeedbacksFiltered.htm?productID=' + productID +
-                                           '&starFilter=' + (starFilter || '') + '&page=' + page;
+                                                               const url = '../client/getFeedbacksFiltered.htm?productID=' + productID +
+                                                                       '&starFilter=' + (starFilter || '') + '&page=' + page;
 
-                                   fetch(url)
-                                           .then(response => {
-                                               if (!response.ok) {
-                                                   throw new Error('HTTP ' + response.status);
-                                               }
-                                               return response.text();
-                                           })
-                                           .then(responseText => {
-                                               const data = JSON.parse(responseText);
-                                               updateFeedbackDisplay(data);
+                                                               fetch(url)
+                                                                       .then(response => {
+                                                                           if (!response.ok) {
+                                                                               throw new Error('HTTP ' + response.status);
+                                                                           }
+                                                                           return response.text();
+                                                                       })
+                                                                       .then(responseText => {
+                                                                           const data = JSON.parse(responseText);
+                                                                           updateFeedbackDisplay(data);
 
-                                               document.getElementById('feedback-section').scrollIntoView({behavior: 'smooth'});
-                                           })
-                                           .catch(error => {
-                                               feedbackContainer.innerHTML = '<div class="alert alert-danger">Error loading page: ' + error.message + '</div>';
-                                           });
-                               }
+                                                                           document.getElementById('feedback-section').scrollIntoView({behavior: 'smooth'});
+                                                                       })
+                                                                       .catch(error => {
+                                                                           feedbackContainer.innerHTML = '<div class="alert alert-danger">Error loading page: ' + error.message + '</div>';
+                                                                       });
+                                                           }
 
 
-                               function updateFeedbackDisplay(data) {
-                                   const feedbackContainer = document.getElementById('feedback-list');
-                                   const paginationContainer = document.getElementById('feedback-pagination');
+                                                           function updateFeedbackDisplay(data) {
+                                                               const feedbackContainer = document.getElementById('feedback-list');
+                                                               const paginationContainer = document.getElementById('feedback-pagination');
 
-                                   if (!data || data.success === false) {
-                                       feedbackContainer.innerHTML = '<div class="alert alert-danger">Error: ' + (data && data.error ? data.error : 'Unknown error') + '</div>';
-                                       paginationContainer.innerHTML = '';
-                                       return;
-                                   }
+                                                               if (!data || data.success === false) {
+                                                                   feedbackContainer.innerHTML = '<div class="alert alert-danger">Error: ' + (data && data.error ? data.error : 'Unknown error') + '</div>';
+                                                                   paginationContainer.innerHTML = '';
+                                                                   return;
+                                                               }
 
-                                   if (data.feedbacks && data.feedbacks.length > 0) {
-                                       let html = '<ul class="list-group">';
+                                                               if (data.feedbacks && data.feedbacks.length > 0) {
+                                                                   let html = '<ul class="list-group">';
 
-                                       data.feedbacks.forEach(function (feedback) {
-                                           html += '<li class="list-group-item">';
-                                           html += '<p><strong>' + (feedback.customerName || 'Anonymous') + '</strong> rated: ';
-                                           html += '<span class="badge bg-success">' + (feedback.rating || 0) + ' ';
-                                           html += '<img src="../assets/client/images/star-16.png" alt="Rating Star"></span></p>';
-                                           html += '<p>' + (feedback.feedbackContent || 'No comment provided') + '</p>';
+                                                                   data.feedbacks.forEach(function (feedback) {
+                                                                       html += '<li class="list-group-item">';
+                                                                       html += '<p><strong>' + (feedback.customerName || 'Anonymous') + '</strong> rated: ';
+                                                                       html += '<span class="badge bg-success">' + (feedback.rating || 0) + ' ';
+                                                                       html += '<img src="../assets/client/images/star-16.png" alt="Rating Star"></span></p>';
+                                                                       html += '<p>' + (feedback.feedbackContent || 'No comment provided') + '</p>';
 
-                                           if (feedback.feedbackImages && Array.isArray(feedback.feedbackImages) && feedback.feedbackImages.length > 0) {
-                                               html += '<div class="feedback-images-container" style="margin: 10px 0;">';
-                                               feedback.feedbackImages.forEach(function (imagePath, index) {
-                                                   html += '<div class="feedback-image-wrapper" style="display:inline-block; text-align:center;">';
-                                                   html += '<img src="../assets/client/images/uploads/feedbacks/' + imagePath + '" ';
-                                                   html += 'alt="Feedback Image" class="feedback-image" ';
-                                                   html += 'style="max-width: 150px; max-height: 150px; margin-right: 10px; margin-bottom: 10px; ';
-                                                   html += 'border: 1px solid #ddd; border-radius: 5px; object-fit: cover; cursor: pointer;" ';
-                                                   html += 'data-feedback-index="' + index + '" />';
-                                                   html += '</div>';
-                                               });
-                                               html += '</div>';
-                                           }
+                                                                       if (feedback.feedbackImages && Array.isArray(feedback.feedbackImages) && feedback.feedbackImages.length > 0) {
+                                                                           html += '<div class="feedback-images-container" style="margin: 10px 0;">';
+                                                                           feedback.feedbackImages.forEach(function (imagePath, index) {
+                                                                               html += '<div class="feedback-image-wrapper" style="display:inline-block; text-align:center;">';
+                                                                               html += '<img src="../assets/client/images/uploads/feedbacks/' + imagePath + '" ';
+                                                                               html += 'alt="Feedback Image" class="feedback-image" ';
+                                                                               html += 'style="max-width: 150px; max-height: 150px; margin-right: 10px; margin-bottom: 10px; ';
+                                                                               html += 'border: 1px solid #ddd; border-radius: 5px; object-fit: cover; cursor: pointer;" ';
+                                                                               html += 'data-feedback-index="' + index + '" />';
+                                                                               html += '</div>';
+                                                                           });
+                                                                           html += '</div>';
+                                                                       }
 
-                                           if (feedback.employeeResponse && feedback.employeeResponse.responseContent) {
-                                               html += '<div class="employee-response" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #007bff; border-radius: 5px;">';
-                                               html += '<div style="display: flex; align-items: center; margin-bottom: 10px;">';
-                                               html += '<i class="fa fa-reply" style="color: #007bff; margin-right: 8px;"></i>';
-                                               html += '<strong style="color: #007bff;">Store Response:</strong>';
-                                               html += '</div>';
-                                               html += '<p style="margin: 0; color: #495057;">' + (feedback.employeeResponse.responseContent || '') + '</p>';
-                                               if (feedback.employeeResponse.formattedResponseDate) {
-                                                   html += '<small class="text-muted" style="font-size: 12px;">Responded on: ' + feedback.employeeResponse.formattedResponseDate + '</small>';
-                                               }
-                                               html += '</div>';
-                                           }
+                                                                       if (feedback.employeeResponse && feedback.employeeResponse.responseContent) {
+                                                                           html += '<div class="employee-response" style="margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #007bff; border-radius: 5px;">';
+                                                                           html += '<div style="display: flex; align-items: center; margin-bottom: 10px;">';
+                                                                           html += '<i class="fa fa-reply" style="color: #007bff; margin-right: 8px;"></i>';
+                                                                           html += '<strong style="color: #007bff;">Store Response:</strong>';
+                                                                           html += '</div>';
+                                                                           html += '<p style="margin: 0; color: #495057;">' + (feedback.employeeResponse.responseContent || '') + '</p>';
+                                                                           if (feedback.employeeResponse.formattedResponseDate) {
+                                                                               html += '<small class="text-muted" style="font-size: 12px;">Responded on: ' + feedback.employeeResponse.formattedResponseDate + '</small>';
+                                                                           }
+                                                                           html += '</div>';
+                                                                       }
 
-                                           html += '<p class="text-muted"><small>' + (feedback.formattedFeedbackDate || '') + '</small></p>';
-                                           html += '</li>';
-                                       });
+                                                                       html += '<p class="text-muted"><small>' + (feedback.formattedFeedbackDate || '') + '</small></p>';
+                                                                       html += '</li>';
+                                                                   });
 
-                                       html += '</ul>';
-                                       feedbackContainer.innerHTML = html;
+                                                                   html += '</ul>';
+                                                                   feedbackContainer.innerHTML = html;
 
-                                       bindImageClickEvents();
-                                       updatePagination(data.currentPage, data.totalPages, data.starFilter);
-                                   } else {
-                                       feedbackContainer.innerHTML = '<p class="text-center text-muted">No feedbacks available for this rating.</p>';
-                                       paginationContainer.innerHTML = '';
-                                   }
-                               }
+                                                                   bindImageClickEvents();
+                                                                   updatePagination(data.currentPage, data.totalPages, data.starFilter);
+                                                               } else {
+                                                                   feedbackContainer.innerHTML = '<p class="text-center text-muted">No feedbacks available for this rating.</p>';
+                                                                   paginationContainer.innerHTML = '';
+                                                               }
+                                                           }
 
-                               function bindImageClickEvents() {
-                                   const images = document.querySelectorAll('.feedback-image');
-                                   images.forEach(function (img) {
-                                       img.addEventListener('click', function () {
-                                           showLargeFeedbackImage(this);
-                                       });
-                                   });
-                               }
+                                                           function bindImageClickEvents() {
+                                                               const images = document.querySelectorAll('.feedback-image');
+                                                               images.forEach(function (img) {
+                                                                   img.addEventListener('click', function () {
+                                                                       showLargeFeedbackImage(this);
+                                                                   });
+                                                               });
+                                                           }
 
-                               function updatePagination(currentPage, totalPages, starFilter) {
-                                   const paginationContainer = document.getElementById('feedback-pagination');
+                                                           function updatePagination(currentPage, totalPages, starFilter) {
+                                                               const paginationContainer = document.getElementById('feedback-pagination');
 
-                                   if (!totalPages || totalPages <= 1) {
-                                       paginationContainer.innerHTML = '';
-                                       return;
-                                   }
+                                                               if (!totalPages || totalPages <= 1) {
+                                                                   paginationContainer.innerHTML = '';
+                                                                   return;
+                                                               }
 
-                                   const maxDisplayPages = 5;
-                                   let html = '<nav aria-label="Feedback pagination" class="mt-3">';
-                                   html += '<ul class="pagination">';
+                                                               const maxDisplayPages = 5;
+                                                               let html = '<nav aria-label="Feedback pagination" class="mt-3">';
+                                                               html += '<ul class="pagination">';
 
-                                   const prevDisabled = currentPage == 1 ? 'disabled' : '';
-                                   html += '<li class="page-item ' + prevDisabled + '">';
-                                   html += '<a class="page-link" href="javascript:void(0)" ';
-                                   html += 'onclick="loadFeedbackPage(' + (currentPage - 1) + ', ' + (starFilter || 0) + ')">Previous</a>';
-                                   html += '</li>';
+                                                               const prevDisabled = currentPage == 1 ? 'disabled' : '';
+                                                               html += '<li class="page-item ' + prevDisabled + '">';
+                                                               html += '<a class="page-link" href="javascript:void(0)" ';
+                                                               html += 'onclick="loadFeedbackPage(' + (currentPage - 1) + ', ' + (starFilter || 0) + ')">Previous</a>';
+                                                               html += '</li>';
 
-                                   if (totalPages <= maxDisplayPages) {
-                                       for (let i = 1; i <= totalPages; i++) {
-                                           const activeClass = i === currentPage ? 'active' : '';
-                                           html += '<li class="page-item ' + activeClass + '">';
-                                           html += '<a class="page-link" href="javascript:void(0)" ';
-                                           html += 'onclick="loadFeedbackPage(' + i + ', ' + (starFilter || 0) + ')">' + i + '</a>';
-                                           html += '</li>';
-                                       }
-                                   } else if (currentPage <= 3) {
-                                       for (let i = 1; i <= maxDisplayPages; i++) {
-                                           const activeClass = i === currentPage ? 'active' : '';
-                                           html += '<li class="page-item ' + activeClass + '">';
-                                           html += '<a class="page-link" href="javascript:void(0)" ';
-                                           html += 'onclick="loadFeedbackPage(' + i + ', ' + (starFilter || 0) + ')">' + i + '</a>';
-                                           html += '</li>';
-                                       }
-                                       html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                                       html += '<li class="page-item">';
-                                       html += '<a class="page-link" href="javascript:void(0)" ';
-                                       html += 'onclick="loadFeedbackPage(' + totalPages + ', ' + (starFilter || 0) + ')">' + totalPages + '</a>';
-                                       html += '</li>';
-                                   } else if (currentPage >= totalPages - 2) {
-                                       html += '<li class="page-item">';
-                                       html += '<a class="page-link" href="javascript:void(0)" ';
-                                       html += 'onclick="loadFeedbackPage(1, ' + (starFilter || 0) + ')">1</a>';
-                                       html += '</li>';
-                                       html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                                                               if (totalPages <= maxDisplayPages) {
+                                                                   for (let i = 1; i <= totalPages; i++) {
+                                                                       const activeClass = i === currentPage ? 'active' : '';
+                                                                       html += '<li class="page-item ' + activeClass + '">';
+                                                                       html += '<a class="page-link" href="javascript:void(0)" ';
+                                                                       html += 'onclick="loadFeedbackPage(' + i + ', ' + (starFilter || 0) + ')">' + i + '</a>';
+                                                                       html += '</li>';
+                                                                   }
+                                                               } else if (currentPage <= 3) {
+                                                                   for (let i = 1; i <= maxDisplayPages; i++) {
+                                                                       const activeClass = i === currentPage ? 'active' : '';
+                                                                       html += '<li class="page-item ' + activeClass + '">';
+                                                                       html += '<a class="page-link" href="javascript:void(0)" ';
+                                                                       html += 'onclick="loadFeedbackPage(' + i + ', ' + (starFilter || 0) + ')">' + i + '</a>';
+                                                                       html += '</li>';
+                                                                   }
+                                                                   html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                                                                   html += '<li class="page-item">';
+                                                                   html += '<a class="page-link" href="javascript:void(0)" ';
+                                                                   html += 'onclick="loadFeedbackPage(' + totalPages + ', ' + (starFilter || 0) + ')">' + totalPages + '</a>';
+                                                                   html += '</li>';
+                                                               } else if (currentPage >= totalPages - 2) {
+                                                                   html += '<li class="page-item">';
+                                                                   html += '<a class="page-link" href="javascript:void(0)" ';
+                                                                   html += 'onclick="loadFeedbackPage(1, ' + (starFilter || 0) + ')">1</a>';
+                                                                   html += '</li>';
+                                                                   html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
 
-                                       for (let i = totalPages - (maxDisplayPages - 1); i <= totalPages; i++) {
-                                           const activeClass = i === currentPage ? 'active' : '';
-                                           html += '<li class="page-item ' + activeClass + '">';
-                                           html += '<a class="page-link" href="javascript:void(0)" ';
-                                           html += 'onclick="loadFeedbackPage(' + i + ', ' + (starFilter || 0) + ')">' + i + '</a>';
-                                           html += '</li>';
-                                       }
-                                   } else {
-                                       html += '<li class="page-item">';
-                                       html += '<a class="page-link" href="javascript:void(0)" ';
-                                       html += 'onclick="loadFeedbackPage(1, ' + (starFilter || 0) + ')">1</a>';
-                                       html += '</li>';
-                                       html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                                                                   for (let i = totalPages - (maxDisplayPages - 1); i <= totalPages; i++) {
+                                                                       const activeClass = i === currentPage ? 'active' : '';
+                                                                       html += '<li class="page-item ' + activeClass + '">';
+                                                                       html += '<a class="page-link" href="javascript:void(0)" ';
+                                                                       html += 'onclick="loadFeedbackPage(' + i + ', ' + (starFilter || 0) + ')">' + i + '</a>';
+                                                                       html += '</li>';
+                                                                   }
+                                                               } else {
+                                                                   html += '<li class="page-item">';
+                                                                   html += '<a class="page-link" href="javascript:void(0)" ';
+                                                                   html += 'onclick="loadFeedbackPage(1, ' + (starFilter || 0) + ')">1</a>';
+                                                                   html += '</li>';
+                                                                   html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
 
-                                       for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-                                           const activeClass = i === currentPage ? 'active' : '';
-                                           html += '<li class="page-item ' + activeClass + '">';
-                                           html += '<a class="page-link" href="javascript:void(0)" ';
-                                           html += 'onclick="loadFeedbackPage(' + i + ', ' + (starFilter || 0) + ')">' + i + '</a>';
-                                           html += '</li>';
-                                       }
+                                                                   for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                                                                       const activeClass = i === currentPage ? 'active' : '';
+                                                                       html += '<li class="page-item ' + activeClass + '">';
+                                                                       html += '<a class="page-link" href="javascript:void(0)" ';
+                                                                       html += 'onclick="loadFeedbackPage(' + i + ', ' + (starFilter || 0) + ')">' + i + '</a>';
+                                                                       html += '</li>';
+                                                                   }
 
-                                       html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                                       html += '<li class="page-item">';
-                                       html += '<a class="page-link" href="javascript:void(0)" ';
-                                       html += 'onclick="loadFeedbackPage(' + totalPages + ', ' + (starFilter || 0) + ')">' + totalPages + '</a>';
-                                       html += '</li>';
-                                   }
+                                                                   html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                                                                   html += '<li class="page-item">';
+                                                                   html += '<a class="page-link" href="javascript:void(0)" ';
+                                                                   html += 'onclick="loadFeedbackPage(' + totalPages + ', ' + (starFilter || 0) + ')">' + totalPages + '</a>';
+                                                                   html += '</li>';
+                                                               }
 
-                                   const nextDisabled = currentPage == totalPages ? 'disabled' : '';
-                                   html += '<li class="page-item ' + nextDisabled + '">';
-                                   html += '<a class="page-link" href="javascript:void(0)" ';
-                                   html += 'onclick="loadFeedbackPage(' + (currentPage + 1) + ', ' + (starFilter || 0) + ')">Next</a>';
-                                   html += '</li>';
+                                                               const nextDisabled = currentPage == totalPages ? 'disabled' : '';
+                                                               html += '<li class="page-item ' + nextDisabled + '">';
+                                                               html += '<a class="page-link" href="javascript:void(0)" ';
+                                                               html += 'onclick="loadFeedbackPage(' + (currentPage + 1) + ', ' + (starFilter || 0) + ')">Next</a>';
+                                                               html += '</li>';
 
-                                   html += '</ul></nav>';
-                                   paginationContainer.innerHTML = html;
-                               }
+                                                               html += '</ul></nav>';
+                                                               paginationContainer.innerHTML = html;
+                                                           }
 
-                               function updateActiveButton(starRating) {
-                                   const buttons = document.querySelectorAll('.star-group button');
+                                                           function updateActiveButton(starRating) {
+                                                               const buttons = document.querySelectorAll('.star-group button');
 
-                                   buttons.forEach(function (btn) {
-                                       btn.classList.remove('btn-primary');
-                                       btn.classList.add('btn-outline-primary');
-                                   });
+                                                               buttons.forEach(function (btn) {
+                                                                   btn.classList.remove('btn-primary');
+                                                                   btn.classList.add('btn-outline-primary');
+                                                               });
 
-                                   if (starRating >= 0 && starRating < buttons.length) {
-                                       buttons[starRating].classList.remove('btn-outline-primary');
-                                       buttons[starRating].classList.add('btn-primary');
-                                   }
-                               }
+                                                               if (starRating >= 0 && starRating < buttons.length) {
+                                                                   buttons[starRating].classList.remove('btn-outline-primary');
+                                                                   buttons[starRating].classList.add('btn-primary');
+                                                               }
+                                                           }
 
-                               function testConnection() {
-                                   const url = '../client/getFeedbacksFiltered.htm?productID=' + productID + '&starFilter=&page=1';
-                                   fetch(url)
-                                           .then(response => response.text())
-                                           .then(responseText => {
-                                               try {
-                                                   JSON.parse(responseText);
-                                               } catch (e) {
-                                                   console.error('Test failed - not valid JSON:', responseText);
-                                               }
-                                           })
-                                           .catch(error => console.error('Test connection failed:', error));
-                               }
+                                                           function testConnection() {
+                                                               const url = '../client/getFeedbacksFiltered.htm?productID=' + productID + '&starFilter=&page=1';
+                                                               fetch(url)
+                                                                       .then(response => response.text())
+                                                                       .then(responseText => {
+                                                                           try {
+                                                                               JSON.parse(responseText);
+                                                                           } catch (e) {
+                                                                               console.error('Test failed - not valid JSON:', responseText);
+                                                                           }
+                                                                       })
+                                                                       .catch(error => console.error('Test connection failed:', error));
+                                                           }
 
-                               document.addEventListener('DOMContentLoaded', function () {
-                                   if (!productID || productID === '') {
-                                       return;
-                                   }
-                                   updateActiveButton(currentStarFilter);
-                                   setTimeout(testConnection, 1000);
-                               });
+                                                           document.addEventListener('DOMContentLoaded', function () {
+                                                               if (!productID || productID === '') {
+                                                                   return;
+                                                               }
+                                                               updateActiveButton(currentStarFilter);
+                                                               setTimeout(testConnection, 1000);
+                                                           });
 
-                               function increaseQuantity() {
-                                   let input = document.getElementById("quantity");
-                                   let max = parseInt(input.getAttribute("data-max"));
-                                   let current = parseInt(input.value);
+                                                           function increaseQuantity() {
+                                                               let input = document.getElementById("quantity");
+                                                               let max = parseInt(input.getAttribute("data-max"));
+                                                               let current = parseInt(input.value);
 
-                                   if (current < max) {
-                                       input.value = current + 1;
-                                   }
-                                   if (current + 1 >= max) {
-                                       document.getElementById("btnUp").disabled = true;
-                                   }
-                               }
+                                                               if (current < max) {
+                                                                   input.value = current + 1;
+                                                               }
+                                                               if (current + 1 >= max) {
+                                                                   document.getElementById("btnUp").disabled = true;
+                                                               }
+                                                           }
 
-                               function decreaseQuantity() {
-                                   let input = document.getElementById("quantity");
-                                   let current = parseInt(input.value);
+                                                           function decreaseQuantity() {
+                                                               let input = document.getElementById("quantity");
+                                                               let current = parseInt(input.value);
 
-                                   if (current > 1) {
-                                       input.value = current - 1;
-                                       document.getElementById("btnUp").disabled = false;
-                                   }
-                               }
+                                                               if (current > 1) {
+                                                                   input.value = current - 1;
+                                                                   document.getElementById("btnUp").disabled = false;
+                                                               }
+                                                           }
 
-                               function changeImage(imageSrc) {
-                                   document.getElementById("mainImage").src = imageSrc;
-                               }
+                                                           function changeImage(imageSrc) {
+                                                               document.getElementById("mainImage").src = imageSrc;
+                                                           }
         </script>
 
         <jsp:include page="livechat.jsp" />

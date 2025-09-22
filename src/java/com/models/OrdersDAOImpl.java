@@ -55,23 +55,28 @@ public class OrdersDAOImpl implements OrdersDAO {
     }
 
     // Update order status and related transaction status
-    @Override
-    public void updateOrder(String orderId, String newStatus, String paymentMethod) {
-        String query = "UPDATE Orders SET OrderStatus = ?, "
-                + "TransactionStatus = CASE "
-                + "    WHEN ? = 'Approved' THEN 'Refunding' "
-                + "    WHEN ? = 'Return Completed' THEN 'Refunded' "
-                + "    WHEN PaymentMethod = 'Bank Transfer' AND ? IN ('Confirmed', 'On Delivering', 'Completed') THEN 'Completed' "
-                + "    WHEN PaymentMethod = 'Cash' AND ? = 'Completed' THEN 'Completed' "
-                + "    WHEN PaymentMethod = 'Cash' AND ? IN ('Confirmed', 'On Delivering') THEN 'Pending' "
-                + "    ELSE TransactionStatus "
-                + "END, "
-                + "ShipperId = CASE WHEN ? = 'Confirmed' THEN ShipperId ELSE ShipperId END, "
-                + "DeliveryDate = CASE WHEN ? = 'Completed' THEN CURRENT_TIMESTAMP ELSE DeliveryDate END "
-                + "WHERE OrderId = ?";
-        jdbcTemplate.update(query, newStatus, newStatus, newStatus, newStatus, newStatus, newStatus, newStatus, newStatus, orderId);
-    }
-
+  @Override
+public void updateOrder(String orderId, String newStatus, String paymentMethod) {
+    String query = "UPDATE Orders SET OrderStatus = ?, "
+            + "TransactionStatus = CASE "
+            + "    WHEN ? = 'Approved' THEN 'Refunded' "
+            + "    WHEN ? = 'Return Completed' THEN 'Refunded' "
+            + "    WHEN PaymentMethod = 'Bank Transfer' AND ? IN ('Confirmed', 'On Delivering', 'Completed') THEN 'Paid' "
+            + "    WHEN PaymentMethod = 'Cash' AND ? = 'Completed' THEN 'Paid' "
+            + "    WHEN PaymentMethod = 'Cash on Delivery' AND ? = 'Completed' THEN 'Paid' "
+            + "    WHEN PaymentMethod = 'Cash' AND ? IN ('Confirmed', 'On Delivering') THEN 'Unpaid' "
+            + "    WHEN PaymentMethod = 'Cash on Delivery' AND ? IN ('Confirmed', 'On Delivering') THEN 'Unpaid' "
+            + "    WHEN ? = 'Cancelled' THEN 'Cancelled' "
+            + "    ELSE 'Unpaid' "
+            + "END, "
+            + "ShipperId = CASE WHEN ? = 'Confirmed' THEN ShipperId ELSE ShipperId END, "
+            + "DeliveryDate = CASE WHEN ? = 'Completed' THEN CURRENT_TIMESTAMP ELSE DeliveryDate END "
+            + "WHERE OrderId = ?";
+    
+    jdbcTemplate.update(query, 
+        newStatus, newStatus, newStatus, newStatus, newStatus, newStatus, 
+        newStatus, newStatus, newStatus, newStatus, newStatus, orderId);
+}    
     // Search and filter orders for a specific shipper with multiple criteria
     @Override
     public List<Orders> searchAndFilterOrders(int shipperID, String orderIdQuery, String searchQuery, String status) {
@@ -662,5 +667,5 @@ public class OrdersDAOImpl implements OrdersDAO {
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-    }
+    } 
 }

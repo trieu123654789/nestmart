@@ -21,7 +21,8 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
         <link rel="stylesheet" href="../assets/admin/css/app.css"/>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
+        <!-- SweetAlert2 CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <style>
             /* Base Styles */
             body {
@@ -448,15 +449,51 @@
 
             /* Loading Animation */
             @keyframes pulse {
-                0%, 100% { opacity: 1; }
-                50% { opacity: 0.5; }
+                0%, 100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.5;
+                }
             }
 
             .loading {
                 animation: pulse 1.5s ease-in-out infinite;
             }
+            /* Notification Styles */
+            @keyframes pulse {
+                0%, 100% {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                50% {
+                    opacity: 0.8;
+                    transform: scale(1.02);
+                }
+            }
+
+            .animated.pulse {
+                animation: pulse 0.6s ease-in-out;
+            }
+
+            .notification-badge {
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                background: #dc3545;
+                color: white;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                font-size: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                animation: pulse 2s infinite;
+            }
         </style>
-       
+
     </head>
 
     <body>
@@ -466,7 +503,7 @@
             </div>
         </c:if>
         <div class="wrapper">
-             <nav id="sidebar" class="sidebar js-sidebar">
+            <nav id="sidebar" class="sidebar js-sidebar">
                 <div class="sidebar-content js-simplebar">
                     <div class="sidebar-brand">
                         <span class="align-middle">NestMart</span>
@@ -490,9 +527,9 @@
                 </div>
             </nav>
             <div class="main">
-                
+
                 <nav class="navbar navbar-expand navbar-light navbar-bg" style="padding: 14px 22px">
-                    
+
                     <a class="sidebar-toggle js-sidebar-toggle">
                         <i class="hamburger align-self-center"></i>
                     </a>
@@ -699,20 +736,38 @@
                                                     </c:otherwise>
                                                 </c:choose>
 
-                                                <c:choose>
-                                                    <c:when test="${order.transactionStatus == 'Successful' || order.transactionStatus == 'Completed'}">
-                                                        <span class="status-badge badge-success transaction-status">
-                                                            <i class="fas fa-dollar-sign"></i>
-                                                            Paid
-                                                        </span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="status-badge badge-pending transaction-status">
-                                                            <i class="fas fa-clock"></i>
-                                                            ${order.transactionStatus}
-                                                        </span>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                    <c:choose>
+    <c:when test="${order.transactionStatus == 'Paid'}">
+        <span class="status-badge badge-success transaction-status">
+            <i class="fas fa-check-circle"></i>
+            Paid
+        </span>
+    </c:when>
+    <c:when test="${order.transactionStatus == 'Unpaid'}">
+        <span class="status-badge badge-pending transaction-status">
+            <i class="fas fa-clock"></i>
+            Unpaid
+        </span>
+    </c:when>
+    <c:when test="${order.transactionStatus == 'Refunded'}">
+        <span class="status-badge badge-info transaction-status">
+            <i class="fas fa-undo"></i>
+            Refunded
+        </span>
+    </c:when>
+    <c:when test="${order.transactionStatus == 'Cancelled'}">
+        <span class="status-badge badge-warning transaction-status">
+            <i class="fas fa-times"></i>
+            Cancelled
+        </span>
+    </c:when>
+    <c:otherwise>
+        <span class="status-badge badge-pending transaction-status">
+            <i class="fas fa-clock"></i>
+            ${order.transactionStatus}
+        </span>
+    </c:otherwise>
+</c:choose>
                                             </div>
 
                                             <!-- Action Buttons -->
@@ -768,219 +823,447 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
-        <script>
-                                                    function approveReturn(orderID) {
-                                                        $.ajax({
-                                                            url: '../shipper/approveReturn.htm',
-                                                            type: 'POST',
-                                                            data: {
-                                                                orderID: orderID
-                                                            },
-                                                            success: function (response) {
-                                                                if (response === 'success') {
-                                                                    alert('Return request approved successfully.');
-                                                                    location.reload();
-                                                                } else {
-                                                                    alert('Error approving return request.');
-                                                                }
-                                                            },
-                                                            error: function (xhr, status, error) {
-                                                                console.error('Error approving return request:', error);
-                                                                alert('Error approving return request: ' + error);
-                                                            }
-                                                        });
-                                                    }
+     <script>
+// Variables for real-time notification
+let lastOrderCount = 0;
+let isFirstLoad = true;
+// Updated JavaScript to handle XML response with proper error handling
+function checkForNewOrders() {
+    const accountId = <c:out value="${sessionScope.accountId}" default="null"/>;
+    
+    if (!accountId || accountId === null) {
+        console.log('No account ID found');
+        return;
+    }
+    
+    $.ajax({
+        url: '${pageContext.request.contextPath}/shipper/checkNewOrders.htm',
+        type: 'GET',
+        dataType: 'xml',
+        contentType: 'application/xml; charset=UTF-8',
+        headers: {
+            'Accept': 'application/xml, text/xml, */*; q=0.01'
+        },
+        data: {
+            accountId: accountId,
+            lastCount: lastOrderCount
+        },
+        timeout: 10000, 
+        success: function(xmlData) {
+            console.log('XML response received successfully');
+            
+            try {
+                // Parse XML data
+                var $xml = $(xmlData);
+                var hasNewOrders = $xml.find('hasNewOrders').text() === 'true';
+                var totalOrders = parseInt($xml.find('totalOrders').text()) || 0;
+                var newOrdersCount = parseInt($xml.find('newOrdersCount').text()) || 0;
+                var error = $xml.find('e').text();
+                
+                console.log('Parsed data:', {
+                    hasNewOrders: hasNewOrders,
+                    totalOrders: totalOrders,
+                    newOrdersCount: newOrdersCount,
+                    isFirstLoad: isFirstLoad,
+                    error: error
+                });
+                
+                if (error) {
+                    console.error('Server returned error:', error);
+                    return;
+                }
+                
+                if (hasNewOrders && !isFirstLoad) {
+                    var latestOrder = null;
+                    
+                    // Parse latest order if exists
+                    var $latestOrder = $xml.find('latestOrder');
+                    if ($latestOrder.length > 0) {
+                        latestOrder = {
+                            orderID: $latestOrder.find('orderID').text(),
+                            customerName: $latestOrder.find('customerName').text(),
+                            totalAmount: $latestOrder.find('totalAmount').text(),
+                            orderStatus: $latestOrder.find('orderStatus').text()
+                        };
+                    }
+                    
+                    showNewOrderNotification(newOrdersCount, latestOrder);
+                    
+                    // Auto refresh after 3 seconds
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                }
+                
+                lastOrderCount = totalOrders;
+                isFirstLoad = false;
+                
+            } catch (parseError) {
+                console.error('Error parsing XML response:', parseError);
+                console.log('Raw XML:', xmlData);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error Details:');
+            console.error('Status Code:', xhr.status);
+            console.error('Status Text:', xhr.statusText);
+            console.error('Response Text:', xhr.responseText);
+            console.error('Error:', error);
+            console.error('Status:', status);
+            
+            switch(xhr.status) {
+                case 406:
+                    console.error('406 Not Acceptable - Content negotiation failed');
+                    console.log('This usually means the server cannot produce content matching the Accept header');
+                    break;
+                case 404:
+                    console.error('404 Not Found - Check if the URL path is correct');
+                    break;
+                case 500:
+                    console.error('500 Internal Server Error - Check server logs');
+                    break;
+                case 0:
+                    console.error('Network error - Check if server is running');
+                    break;
+                default:
+                    console.error('Unexpected error code:', xhr.status);
+            }
+            
+            if (xhr.responseText) {
+                try {
+                    var $xml = $(xhr.responseText);
+                    var errorMsg = $xml.find('e').text();
+                    if (errorMsg) {
+                        console.error('Server error message:', errorMsg);
+                    }
+                } catch (e) {
+                    console.error('Could not parse error XML:', e);
+                }
+            }
+        }
+    });
+}
+// Function to show new order notification
+function showNewOrderNotification(newCount = 1, latestOrder = null) {
+    let title, text, icon;
+    
+    if (newCount === 1) {
+        title = 'New Order Received!';
+        text =
+               'You have a new delivery order';
+        icon = 'success';
+    } else {
+        title = 'Multiple New Orders!';
+        text = `You have ${newCount} new delivery orders`;
+        icon = 'info';
+    }
+    
+    Swal.fire({
+        title: title,
+        text: text,
+        icon: icon,
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'View Orders',
+        cancelButtonText: 'Dismiss',
+        confirmButtonColor: '#FF9702',
+        cancelButtonColor: '#6c757d',
+        timer: 10000,
+        timerProgressBar: true,
+        position: 'center',
+        toast: false,
+        backdrop: true,
+        allowOutsideClick: false,
+        customClass: {
+            popup: 'animated pulse'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.reload();
+        }
+    });
+    
+    // Play notification sound
+    playNotificationSound();
+}
 
-                                                    function confirmReturnPickup(orderID) {
-                                                        $.ajax({
-                                                            url: '../shipper/confirmReturnPickup.htm',
-                                                            type: 'POST',
-                                                            data: {
-                                                                orderID: orderID
-                                                            },
-                                                            success: function (response) {
-                                                                if (response === 'success') {
-                                                                    alert('Return pickup confirmed successfully.');
-                                                                    location.reload();
-                                                                } else {
-                                                                    alert('Error confirming return pickup.');
-                                                                }
-                                                            },
-                                                            error: function (xhr, status, error) {
-                                                                console.error('Error confirming return pickup:', error);
-                                                                alert('Error confirming return pickup: ' + error);
-                                                            }
-                                                        });
-                                                    }
+// Function to play notification sound
+function playNotificationSound() {
+    try {
+        // Simple beep sound using Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+    } catch (error) {
+        console.log('Could not play notification sound:', error);
+    }
+}
 
-                                                    $(document).ready(function () {
-                                                        function filterOrders(status) {
-                                                            if (status === "") {
-                                                                $(".order-item").show();
-                                                            } else {
-                                                                $(".order-item").hide();
-                                                                $(".order-item[data-status='" + status + "']").show();
-                                                            }
-                                                        }
+function approveReturn(orderID) {
+    $.ajax({
+        url: '../shipper/approveReturn.htm',
+        type: 'POST',
+        data: {
+            orderID: orderID
+        },
+        success: function (response) {
+            if (response === 'success') {
+                Swal.fire('Success!', 'Return request approved successfully.', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                Swal.fire('Error!', 'Error approving return request.', 'error');
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('Error approving return request:', error);
+            Swal.fire('Error!', 'Error approving return request: ' + error, 'error');
+        }
+    });
+}
 
-                                                        filterOrders($("#statusFilter").val());
+function confirmReturnPickup(orderID) {
+    $.ajax({
+        url: '../shipper/confirmReturnPickup.htm',
+        type: 'POST',
+        data: {
+            orderID: orderID
+        },
+        success: function (response) {
+            if (response === 'success') {
+                Swal.fire('Success!', 'Return pickup confirmed successfully.', 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                Swal.fire('Error!', 'Error confirming return pickup.', 'error');
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('Error confirming return pickup:', error);
+            Swal.fire('Error!', 'Error confirming return pickup: ' + error, 'error');
+        }
+    });
+}
 
-                                                        $("#statusFilter").change(function () {
-                                                            filterOrders($(this).val());
-                                                        });
+$(document).ready(function () {
+    // Initialize real-time order checking
+    checkForNewOrders();
+    
+    // Set interval to check every 30 seconds
+    setInterval(checkForNewOrders, 10000);
+    
+    // Check when page becomes visible again
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            checkForNewOrders();
+        }
+    });
 
-                                                        function updateOrderStatus(orderID, status, paymentMethod) {
-                                                            $.ajax({
-                                                                url: '${pageContext.request.contextPath}/shipper/updateOrderStatus.htm',
-                                                                type: 'POST',
-                                                                data: {
-                                                                    orderID: orderID,
-                                                                    status: status,
-                                                                    paymentMethod: paymentMethod
-                                                                },
-                                                                success: function (response) {
-                                                                    console.log('Server response:', response);
-                                                                    if (response === 'success') {
-                                                                        var $orderCard = $('#order-' + orderID);
-                                                                        $orderCard.find('.order-status').text(status);
-                                                                        $orderCard.closest('.order-item').attr('data-status', status);
-                                                                        updateButtonStatus(orderID, status, paymentMethod);
-                                                                        updateTransactionStatus(orderID, status, paymentMethod);
+    function filterOrders(status) {
+        if (status === "") {
+            $(".order-item").show();
+        } else {
+            $(".order-item").hide();
+            $(".order-item[data-status='" + status + "']").show();
+        }
+    }
 
-                                                                        if (status === 'On Delivering') {
-                                                                            var startTime = new Date().getTime();
-                                                                            localStorage.setItem('startTime-' + orderID, startTime);
-                                                                            startTimer(orderID);
-                                                                        } else if (status === 'Completed') {
-                                                                            finalizeTimer(orderID);
-                                                                        }
+    filterOrders($("#statusFilter").val());
 
-                                                                        // Update the status filter dropdown and trigger filtering
-                                                                        $("#statusFilter").val(status).trigger('change');
-                                                                    } else {
-                                                                        console.error('Server returned non-success response:', response);
-                                                                        alert('Error updating order status.');
-                                                                    }
-                                                                },
-                                                                error: function (xhr, status, error) {
-                                                                    console.error('Error updating order status:', xhr.responseText);
-                                                                    alert('Error sending request: ' + error);
-                                                                }
-                                                            });
-                                                        }
+    $("#statusFilter").change(function () {
+        filterOrders($(this).val());
+    });
 
-                                                        function updateButtonStatus(orderID, status, paymentMethod) {
-                                                            var orderCard = $('#order-' + orderID);
-                                                            var button = orderCard.find('button');
+    function updateOrderStatus(orderID, status, paymentMethod) {
+        $.ajax({
+            url: '${pageContext.request.contextPath}/shipper/updateOrderStatus.htm',
+            type: 'POST',
+            data: {
+                orderID: orderID,
+                status: status,
+                paymentMethod: paymentMethod
+            },
+            success: function (response) {
+                console.log('Server response:', response);
+                if (response === 'success') {
+                    var $orderCard = $('#order-' + orderID);
+                    $orderCard.find('.order-status').text(status);
+                    $orderCard.closest('.order-item').attr('data-status', status);
+                    updateButtonStatus(orderID, status, paymentMethod);
+                    updateTransactionStatus(orderID, status, paymentMethod);
 
-                                                            switch (status) {
-                                                                case 'Confirmed':
-                                                                    button.text('Start delivery');
-                                                                    button.removeClass().addClass('btn btn-info btn-update');
-                                                                    button.off('click').on('click', function () {
-                                                                        updateOrderStatus(orderID, 'On Delivering', paymentMethod);
-                                                                    });
-                                                                    break;
-                                                                case 'On Delivering':
-                                                                    button.text('Complete Order');
-                                                                    button.removeClass().addClass('btn btn-success btn-update');
-                                                                    button.off('click').on('click', function () {
-                                                                        updateOrderStatus(orderID, 'Completed', paymentMethod);
-                                                                    });
-                                                                    break;
-                                                                case 'Completed':
-                                                                    button.remove();
-                                                                    // Check if completion message doesn't already exist
-                                                                    if (orderCard.find('.order-completed-message').length === 0) {
-                                                                        orderCard.find('.order-actions').append('<div class="order-completed order-completed-message"><i class="fas fa-check-circle"></i>Order Completed</div>');
-                                                                    }
-                                                                    break;
-                                                                default:
-                                                                    console.warn('Unexpected order status:', status);
-                                                            }
-                                                        }
+                    if (status === 'On Delivering') {
+                        var startTime = new Date().getTime();
+                        localStorage.setItem('startTime-' + orderID, startTime);
+                        startTimer(orderID);
+                    } else if (status === 'Completed') {
+                        finalizeTimer(orderID);
+                    }
 
+                    // Update the status filter dropdown and trigger filtering
+                    $("#statusFilter").val(status).trigger('change');
+                    
+                    Swal.fire({
+                        title: 'Success!',
+                        text: `Order status updated to ${status}`,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    console.error('Server returned non-success response:', response);
+                    Swal.fire('Error!', 'Error updating order status.', 'error');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error updating order status:', xhr.responseText);
+                Swal.fire('Error!', 'Error sending request: ' + error, 'error');
+            }
+        });
+    }
 
-                                                        function updateTransactionStatus(orderID, status, paymentMethod) {
-                                                            var transactionStatusElement = $('#order-' + orderID + ' .transaction-status');
+    function updateButtonStatus(orderID, status, paymentMethod) {
+        var orderCard = $('#order-' + orderID);
+        var button = orderCard.find('button');
 
-                                                            if (paymentMethod === 'Bank Transfer') {
-                                                                if (['Confirmed', 'On Delivering', 'Completed'].includes(status)) {
-                                                                    transactionStatusElement.text('Completed');
-                                                                }
-                                                            } else if (paymentMethod === 'Cash') {
-                                                                if (status === 'Completed') {
-                                                                    transactionStatusElement.text('Completed');
-                                                                } else if (['Confirmed', 'On Delivering'].includes(status)) {
-                                                                    transactionStatusElement.text('Pending');
-                                                                }
-                                                            } else {
-                                                                console.warn('Unexpected payment method or status:', paymentMethod, status);
-                                                            }
-                                                        }
+        switch (status) {
+            case 'Confirmed':
+                button.text('Start delivery');
+                button.removeClass().addClass('btn btn-info btn-update');
+                button.off('click').on('click', function () {
+                    updateOrderStatus(orderID, 'On Delivering', paymentMethod);
+                });
+                break;
+            case 'On Delivering':
+                button.text('Complete Order');
+                button.removeClass().addClass('btn btn-success btn-update');
+                button.off('click').on('click', function () {
+                    updateOrderStatus(orderID, 'Completed', paymentMethod);
+                });
+                break;
+            case 'Completed':
+                button.remove();
+                // Check if completion message doesn't already exist
+                if (orderCard.find('.order-completed-message').length === 0) {
+                    orderCard.find('.order-actions').append('<div class="order-completed order-completed-message"><i class="fas fa-check-circle"></i>Order Completed</div>');
+                }
+                break;
+            default:
+                console.warn('Unexpected order status:', status);
+        }
+    }
+// Updated JavaScript function to match the fixed backend logic
+function updateTransactionStatus(orderID, status, paymentMethod) {
+    var transactionStatusElement = $('#order-' + orderID + ' .transaction-status');
 
-                                                        function startTimer(orderID) {
-                                                            var startTime = parseInt(localStorage.getItem('startTime-' + orderID));
-                                                            var timerElement = $('#timer-' + orderID);
+    transactionStatusElement.removeClass('badge-success badge-pending badge-warning badge-info');
 
-                                                            function updateTimer() {
-                                                                var currentTime = new Date().getTime();
-                                                                var secondsElapsed = Math.floor((currentTime - startTime) / 1000);
-                                                                timerElement.text(secondsElapsed);
+    if (status === 'Approved' || status === 'Return Completed') {
+        transactionStatusElement.text('Refunded');
+        transactionStatusElement.addClass('badge-info');
+        return;
+    }
+    
+    if (status === 'Cancelled') {
+        transactionStatusElement.text('Cancelled');
+        transactionStatusElement.addClass('badge-warning');
+        return;
+    }
 
-                                                                if (localStorage.getItem('completedTime-' + orderID)) {
-                                                                    clearTimeout(timeoutId);
-                                                                    displayCompletedTime(orderID);
-                                                                } else {
-                                                                    timeoutId = setTimeout(updateTimer, 1000);
-                                                                }
-                                                            }
+    if (paymentMethod === 'Bank Transfer') {
+        if (['Confirmed', 'On Delivering', 'Completed'].includes(status)) {
+            transactionStatusElement.text('Paid');
+            transactionStatusElement.addClass('badge-success');
+        } else {
+            transactionStatusElement.text('Unpaid');
+            transactionStatusElement.addClass('badge-pending');
+        }
+    } else if (paymentMethod === 'Cash' || paymentMethod === 'Cash on Delivery') {
+        if (status === 'Completed') {
+            transactionStatusElement.text('Paid');
+            transactionStatusElement.addClass('badge-success');
+        } else {
+            transactionStatusElement.text('Unpaid');
+            transactionStatusElement.addClass('badge-pending');
+        }
+    } else {
+        transactionStatusElement.text('Unpaid');
+        transactionStatusElement.addClass('badge-pending');
+    }
+}
+    function startTimer(orderID) {
+        var startTime = parseInt(localStorage.getItem('startTime-' + orderID));
+        var timerElement = $('#timer-' + orderID);
 
-                                                            var timeoutId = setTimeout(updateTimer, 0);
-                                                            localStorage.setItem('timeoutId-' + orderID, timeoutId);
-                                                        }
+        function updateTimer() {
+            var currentTime = new Date().getTime();
+            var secondsElapsed = Math.floor((currentTime - startTime) / 1000);
+            timerElement.text(secondsElapsed);
 
-                                                        function finalizeTimer(orderID) {
-                                                            var startTime = localStorage.getItem('startTime-' + orderID);
-                                                            if (startTime) {
-                                                                var endTime = new Date().getTime();
-                                                                var totalSeconds = Math.floor((endTime - parseInt(startTime)) / 1000);
-                                                                localStorage.setItem('completedTime-' + orderID, totalSeconds);
-                                                                localStorage.removeItem('startTime-' + orderID);
-                                                                localStorage.removeItem('timeoutId-' + orderID);
-                                                                displayCompletedTime(orderID);
-                                                            }
-                                                        }
+            if (localStorage.getItem('completedTime-' + orderID)) {
+                clearTimeout(timeoutId);
+                displayCompletedTime(orderID);
+            } else {
+                timeoutId = setTimeout(updateTimer, 1000);
+            }
+        }
 
-                                                        function displayCompletedTime(orderID) {
-                                                            var completedTime = localStorage.getItem('completedTime-' + orderID);
-                                                            if (completedTime) {
-                                                                $('#timer-' + orderID).text(completedTime + ' (Hoàn thành)');
-                                                            }
-                                                        }
+        var timeoutId = setTimeout(updateTimer, 0);
+        localStorage.setItem('timeoutId-' + orderID, timeoutId);
+    }
 
-                                                        // Initialize timers for existing orders
-                                                        $('.order-card').each(function () {
-                                                            var orderID = $(this).attr('id').split('-')[1];
-                                                            var startTime = localStorage.getItem('startTime-' + orderID);
-                                                            var status = $(this).find('.order-status').text();
-                                                            var completedTime = localStorage.getItem('completedTime-' + orderID);
+    function finalizeTimer(orderID) {
+        var startTime = localStorage.getItem('startTime-' + orderID);
+        if (startTime) {
+            var endTime = new Date().getTime();
+            var totalSeconds = Math.floor((endTime - parseInt(startTime)) / 1000);
+            localStorage.setItem('completedTime-' + orderID, totalSeconds);
+            localStorage.removeItem('startTime-' + orderID);
+            localStorage.removeItem('timeoutId-' + orderID);
+            displayCompletedTime(orderID);
+        }
+    }
 
-                                                            if (completedTime) {
-                                                                displayCompletedTime(orderID);
-                                                            } else if (startTime && status === 'On Delivering') {
-                                                                startTimer(orderID);
-                                                            }
-                                                        });
+    function displayCompletedTime(orderID) {
+        var completedTime = localStorage.getItem('completedTime-' + orderID);
+        if (completedTime) {
+            $('#timer-' + orderID).text(completedTime + ' (Hoàn thành)');
+        }
+    }
 
-                                                        // Make updateOrderStatus globally accessible
-                                                        window.updateOrderStatus = updateOrderStatus;
-                                                        
-                                                        // Initialize Feather icons
-                                                        if (typeof feather !== 'undefined') {
-                                                            feather.replace();
-                                                        }
-                                                    });
-        </script>
+    // Initialize timers for existing orders
+    $('.order-card').each(function () {
+        var orderID = $(this).attr('id').split('-')[1];
+        var startTime = localStorage.getItem('startTime-' + orderID);
+        var status = $(this).find('.order-status').text();
+        var completedTime = localStorage.getItem('completedTime-' + orderID);
+
+        if (completedTime) {
+            displayCompletedTime(orderID);
+        } else if (startTime && status === 'On Delivering') {
+            startTimer(orderID);
+        }
+    });
+
+    // Make updateOrderStatus globally accessible
+    window.updateOrderStatus = updateOrderStatus;
+
+    // Initialize Feather icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+});
+</script>    
     </body>
 </html>

@@ -185,7 +185,7 @@
                                                         data-available-stock="${item.availableQuantity}">
                                                         
                                                         <td data-label="Product Image">
-                                                            <img src="../assets/client/images/uploads/products/${item.productImage}"
+                                                            <img src="../assets/admin/images/uploads/products/${item.productImage}"
                                                                  alt="${item.productName}"
                                                                  class="cart-image" style="width: 80px;">
                                                         </td>

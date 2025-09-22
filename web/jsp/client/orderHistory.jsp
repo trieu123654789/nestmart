@@ -690,7 +690,7 @@
                                                             <div class="product-thumb">
                                                                 <c:choose>
                                                                     <c:when test="${not empty orderDetail.images}">
-                                                                        <img src="../assets/client/images/uploads/products/${orderDetail.images[0].images}" 
+                                                                        <img src="../assets/admin/images/uploads/products/${orderDetail.images[0].images}" 
                                                                              alt="${orderDetail.product.productName}" />
                                                                     </c:when>
                                                                     <c:otherwise>No image</c:otherwise>

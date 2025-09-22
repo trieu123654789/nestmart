@@ -22,7 +22,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.css">
 
-        <title>NestMart - Categories</title>
+        <title>NestMart - Assign Shipper</title>
 
         <link rel="stylesheet" href="../assets/admin/css/app.css"/>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -160,6 +160,34 @@
                 max-width: 100%;
                 height: auto;
             }
+            
+            .total-summary {
+                background-color: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                padding: 20px;
+                margin-top: 20px;
+            }
+            
+            .total-row {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+                padding: 5px 0;
+            }
+            
+            .total-row.final-total {
+                border-top: 2px solid #333;
+                padding-top: 15px;
+                margin-top: 15px;
+                font-size: 18px;
+                font-weight: 600;
+            }
+            
+            .discount-row {
+                color: #28a745;
+                font-weight: 500;
+            }
         </style>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Welcome to Spring Web MVC project</title>
@@ -228,7 +256,7 @@
                                 <span class="align-middle">Support Message</span>
                             </a>
                         </li>
-                          <li class="sidebar-item">
+                        <li class="sidebar-item">
                             <a class="sidebar-link" href="scheduleEmp.htm">
                                 <i class="align-middle me-2" data-feather="calendar"></i> 
                                 <span class="align-middle">Schedule</span>
@@ -279,9 +307,10 @@
                                 ${errorMessage}
                             </div>
                         </c:if>
+
                         <form action="${pageContext.request.contextPath}/employee/order.htm" method="post">
                             <div class="form-group">
-                                <label for="name">Order ID:</label>
+                                <label for="orderID">Order ID:</label>
                                 <input type="text" class="form-control" id="orderID" name="orderID" value="${order.orderID}" readonly>
                             </div>
 
@@ -352,25 +381,86 @@
                                             <td><c:out value="${detail.productID}" /></td>
                                             <td><c:out value="${detail.quantity}" /></td>
                                             <td>
-                                                <fmt:formatNumber value="${detail.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                <fmt:formatNumber value="${detail.unitPrice}" type="number" 
+                                                                  minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                             </td>
                                             <td>
-                                                <fmt:formatNumber value="${detail.totalPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                <fmt:formatNumber value="${detail.totalPrice}" type="number" 
+                                                                  minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                             </td>
                                             <td><c:out value="${detail.productName}" /></td>
                                             <td>
-                                                <img src="${pageContext.request.contextPath}/assets/admin/images/uploads/products/${detail.image}" alt="Product Image" width="100" />
+                                                <img src="${pageContext.request.contextPath}/assets/admin/images/uploads/products/${detail.image}" 
+                                                     alt="Product Image" width="100" />
                                             </td>
                                         </tr>
                                     </c:forEach>
                                 </tbody>
                             </table>
 
-                            <div class="form-group d-flex justify-content-end align-items-center">
-                                <label for="totalAmount" class="mr-2">Total Amount:</label>
-                                <span id="totalAmount" class="font-weight-bold" style="margin-top: -10px">
-                                    <fmt:formatNumber value="${order.totalAmount}" type="number" maxFractionDigits="0" groupingUsed="true" />$
-                                </span>
+                            <div class="total-summary">
+                                <h4>Order Summary</h4>
+                                
+                                <c:set var="subtotal" value="0" />
+                                <c:forEach var="detail" items="${orderDetails}">
+                                    <c:set var="subtotal" value="${subtotal + detail.totalPrice}" />
+                                </c:forEach>
+                                
+                                <div class="total-row">
+                                    <span>Subtotal:</span>
+                                    <span>
+                                        <fmt:formatNumber value="${subtotal}" type="number" 
+                                                          minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
+                                    </span>
+                                </div>
+
+                                <c:set var="shippingFee" value="5.00" />
+                                <div class="total-row">
+                                    <span>Shipping Fee:</span>
+                                    <span>${shippingFee}$</span>
+                                </div>
+
+                                <c:set var="discountAmount" value="0" />
+                                <c:if test="${not empty usedVoucher}">
+                                    <c:choose>
+                                        <c:when test="${usedVoucher['DiscountType'] eq 'Percentage'}">
+                                            <c:set var="calculatedDiscount" value="${subtotal * usedVoucher['DiscountValue'] / 100}" />
+                                            <c:choose>
+                                                <c:when test="${not empty usedVoucher['MaxDiscount'] and usedVoucher['MaxDiscount'] < calculatedDiscount}">
+                                                    <c:set var="discountAmount" value="${usedVoucher['MaxDiscount']}" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:set var="discountAmount" value="${calculatedDiscount}" />
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:when>
+                                        <c:when test="${usedVoucher['DiscountType'] eq 'FixedAmount'}">
+                                            <c:choose>
+                                                <c:when test="${usedVoucher['DiscountValue'] > subtotal}">
+                                                    <c:set var="discountAmount" value="${subtotal}" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:set var="discountAmount" value="${usedVoucher['DiscountValue']}" />
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:when>
+                                    </c:choose>
+
+                                    <div class="total-row discount-row">
+                                        <span>Voucher Discount (${usedVoucher['Code']}):</span>
+                                        <span>-<fmt:formatNumber value="${discountAmount}" type="number"
+                                                              minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$</span>
+                                    </div>
+                                </c:if>
+
+                                <c:set var="finalTotal" value="${subtotal + shippingFee - discountAmount}" />
+                                <div class="total-row final-total">
+                                    <span>Total Amount:</span>
+                                    <span>
+                                        <fmt:formatNumber value="${finalTotal}" type="number" 
+                                                          minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
+                                    </span>
+                                </div>
                             </div>
 
                             <div class="form-group mt-3">
@@ -389,6 +479,3 @@
         <script src="../assets/admin/js/app.js"></script>
     </body>
 </html>
-
-
-

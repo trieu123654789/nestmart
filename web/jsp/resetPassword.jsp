@@ -1,5 +1,3 @@
-
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -62,6 +60,14 @@
                 outline: none;
             }
 
+            .txt-input.invalid {
+                border-color: #dc3545;
+            }
+
+            .txt-input.valid {
+                border-color: #28a745;
+            }
+
             .form-group {
                 margin-bottom: 15px;
             }
@@ -74,11 +80,16 @@
                 color: #333;
             }
 
-            .error-message {
+            .validation-message {
                 color: #dc3545;
                 font-size: 0.875em;
                 margin-top: 5px;
                 font-style: italic;
+                display: none;
+            }
+
+            .validation-message.show {
+                display: block;
             }
 
             .alert-success, .alert-danger {
@@ -135,6 +146,12 @@
                 transform: scale(0.98);
             }
 
+            .btn-submit:disabled {
+                background-color: #6c757d;
+                cursor: not-allowed;
+                transform: none;
+            }
+
             .link-to-help {
                 color: #ff9702;
                 text-decoration: none;
@@ -145,7 +162,6 @@
             .link-to-help:hover {
                 text-decoration: underline;
             }
-
 
         </style>
     </head>
@@ -172,7 +188,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#">Quality is not just our promise, it’s what makes our brand stand out.</a>
+                                <a href="#">Quality is not just our promise, it's what makes our brand stand out.</a>
                             </li>
                         </ul>
                     </div>
@@ -216,18 +232,12 @@
                         <div class="col-lg-6 col-md-7 hidden-sm hidden-xs">
                             <div class="primary-menu">
                                 <ul class="menu nestmart-menu clone-main-menu clone-primary-menu" id="primary-menu" data-menuname="main menu">
-                                    <li class="menu-item"><a href="client/clientboard.htm">Home</a>
-
-                                    </li>
+                                    <li class="menu-item"><a href="client/clientboard.htm">Home</a></li>
                                     <li class="menu-item">
-
                                         <a href="client/product.htm" class="menu-name" data-title="Product">Product</a>
-
                                     </li>
                                     <li class="menu-item">
-
                                         <a href="client/discount.htm" class="menu-name" data-title="Discount">Discount</a>
-
                                     </li>
                                     <li class="menu-item">
                                         <a href="client/about.htm" class="menu-name" data-title="About">About</a>
@@ -235,10 +245,10 @@
                                     <li class="menu-item">
                                         <c:choose>
                                             <c:when test="${not empty sessionScope.email}">
-                                                <a href="client/viewNotifications.htm" class="menu-name" data-title="Order History">Notifications</a>
+                                                <a href="client/viewNotifications.htm" class="menu-name" data-title="Notifications">Notifications</a>
                                             </c:when>
                                             <c:otherwise>
-                                                <a href="login.htm" class="menu-name" data-title="Order History">Notifications</a>
+                                                <a href="login.htm" class="menu-name" data-title="Notifications">Notifications</a>
                                             </c:otherwise>
                                         </c:choose>
                                     </li>
@@ -303,7 +313,6 @@
                             <div class="header-search-bar layout-01">
                                 <form action="client/product.htm" class="form-search" name="desktop-search" method="get">
                                     <input type="text" name="keyword" class="input-text" placeholder="Search product..." value="${keyword}">
-
                                     <button type="submit" class="btn-submit">
                                         <i class="nestmart-icon icon-search"></i>
                                     </button>
@@ -336,32 +345,32 @@
                 </ul>
             </nav>
         </div>
+        
         <div id="main-content" class="main-content">
             <div class="form-wrapper">
                 <div class="form-container">
                     <h2 class="text-center mb-4">Reset Password</h2>
-                    <c:if test="${not empty message}">
-                        <div class="alert alert-success">
-                            ${message}
+                    
+                    <!-- Display flash messages -->
+                       <c:if test="${not empty errorMessage}">
+                        <div class="alert alert-danger error-box">
+                            <i class="fa fa-exclamation-circle"></i>
+                            <span>${errorMessage}</span>
                         </div>
                     </c:if>
+                    
                     <form action="resetPassword.htm" method="post" id="resetPasswordForm">
                         <input type="hidden" name="token" value="${token}" />
 
                         <div class="form-group">
                             <label for="password">New Password:</label>
                             <input type="password" id="password" name="password" class="txt-input" required />
-                            <c:if test="${not empty errors.password}">
-                                <div class="error-message">${errors.password}</div>
-                            </c:if>
+                          
                         </div>
 
                         <div class="form-group">
                             <label for="confirmPassword">Confirm New Password:</label>
                             <input type="password" id="confirmPassword" name="confirmPassword" class="txt-input" required />
-                            <c:if test="${not empty errors.confirmPassword}">
-                                <div class="error-message">${errors.confirmPassword}</div>
-                            </c:if>
                         </div>
 
                         <button type="submit" class="btn-submit">Reset Password</button>
@@ -372,6 +381,7 @@
                 </div>
             </div>
         </div>
+        
         <footer id="footer" class="footer layout-03">
             <div class="footer-content background-footer-03">
                 <div class="container">
@@ -386,8 +396,6 @@
                                         <span> (+84) 123 456 789</span>
                                     </p>
                                 </div>
-                                <div class="newsletter-block layout-01">
-
                             </section>
                         </div>
                         <div class="col-lg-4 col-md-4 col-sm-6 md-margin-top-5px sm-margin-top-50px xs-margin-top-40px">
@@ -435,7 +443,7 @@
                                             <p class="info-item">
                                                 <i class="nestmart-icon icon-phone"></i>
                                                 <b class="desc">Phone: (+84) 123 456 789</b>
-                                            </p>
+                            </p>
                                         </li>
                                         <li>
                                             <p class="info-item">
@@ -465,7 +473,6 @@
                         <div class="col-xs-12">
                             <div class="separator sm-margin-top-62px xs-margin-top-40px"></div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -482,7 +489,8 @@
         <script src="assets/js/functions.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.2/feather.min.js"></script>
         <link rel="stylesheet" href="../assets/admin/css/app.css"/>
-        <script>
+        
+         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 // Show alerts for server-side messages
                 <c:if test="${not empty errorMessage}">
@@ -493,40 +501,7 @@
                     alert('Success: ${successMessage}');
                 </c:if>
                 
-                // Form validation
-                const form = document.getElementById('resetPasswordForm');
-                if (form) {
-                    form.addEventListener('submit', function(event) {
-                        const password = document.getElementById('password').value;
-                        const confirmPassword = document.getElementById('confirmPassword').value;
-                        
-                        // Validate password requirements
-                        if (password.length < 6) {
-                            alert('Error: Password must be at least 6 characters long.');
-                            event.preventDefault();
-                            return false;
-                        }
-                        
-                        // Check if password contains both letters and numbers
-                        const hasLetters = /[a-zA-Z]/.test(password);
-                        const hasNumbers = /[0-9]/.test(password);
-                        
-                        if (!hasLetters || !hasNumbers) {
-                            alert('Error: Password must contain both letters and numbers.');
-                            event.preventDefault();
-                            return false;
-                        }
-                        
-                        // Check if passwords match
-                        if (password !== confirmPassword) {
-                            alert('Error: Confirm password does not match the new password.');
-                            event.preventDefault();
-                            return false;
-                        }
-                        
-                        return true;
-                    });
-                    
+             
                     // Real-time validation feedback
                     const passwordInput = document.getElementById('password');
                     const confirmPasswordInput = document.getElementById('confirmPassword');
@@ -569,6 +544,5 @@
                 }
             });
         </script>
-
     </body>
 </html>

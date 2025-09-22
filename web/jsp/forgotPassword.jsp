@@ -339,14 +339,19 @@
                         </div>
                     </c:if>
                     <form action="forgotPassword.htm" method="post">
+                        
                         <div class="form-group">
+                            <c:if test="${not empty errorMessage}">
+                        <div class="alert alert-danger error-box">
+                            <i class="fa fa-exclamation-circle"></i>
+                            <span>${errorMessage}</span>
+                        </div>
+                    </c:if>
                             <label for="email">Email:</label>
                             <input type="email" id="email" name="email" placeholder="Enter your email" class="txt-input" required />
                         </div>
                         <button type="submit" class="btn-submit">Send Reset Link</button>
-                        <c:if test="${not empty errorMessage}">
-                            <p style="color:red;">${errorMessage}</p>
-                        </c:if>
+                   
                     </form>
                     <div class="form-row wrap-btn">
                         <a href="login.htm" class="link-to-help">Back to Login</a>

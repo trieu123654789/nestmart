@@ -489,7 +489,7 @@
                                                             <c:set var="item" value="${entry.value}" />
                                                             <tr>
                                                                 <td>
-                                                                    <img src="../assets/client/images/uploads/products/${item.productImage}" 
+                                                                    <img src="../assets/admin/images/uploads/products/${item.productImage}" 
                                                                          alt="${item.productName}" class="cart-image">
                                                                 </td>
                                                                 <td data-label="Name">${item.productName}</td>

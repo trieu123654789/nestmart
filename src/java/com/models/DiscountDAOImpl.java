@@ -46,7 +46,7 @@ public class DiscountDAOImpl implements DiscountDAO {
                     (String) row.get("DiscountName"),
                     (String) row.get("Description"),
                     ((Timestamp) row.get("StartDate")).toLocalDateTime(),
-                    ((Timestamp) row.get("End")).toLocalDateTime(),
+                    ((Timestamp) row.get("EndDate")).toLocalDateTime(),
                     (String) row.get("Image")
             );
             discountList.add(discount);
@@ -61,8 +61,17 @@ public class DiscountDAOImpl implements DiscountDAO {
         if (imageFile != null && !imageFile.isEmpty()) {
             try {
                 fileName = Paths.get(imageFile.getOriginalFilename()).getFileName().toString();
-                String relativePath = "/web/assets/admin/images/uploads/discount/";
-                String uploadPath = new File(servletContext.getRealPath("")).getParentFile().getParentFile().getAbsolutePath() + relativePath;
+                // Fix path resolution for Docker container
+                String webAppPath = servletContext.getRealPath("");
+                String uploadPath;
+                if (webAppPath != null) {
+                    // Running in container or deployed environment
+                    uploadPath = webAppPath + "/assets/admin/images/uploads/discount/";
+                } else {
+                    // Fallback for development
+                    String relativePath = "/web/assets/admin/images/uploads/discount/";
+                    uploadPath = new File(servletContext.getRealPath("")).getParentFile().getParentFile().getAbsolutePath() + relativePath;
+                }
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
                     uploadDir.mkdirs();
@@ -97,8 +106,17 @@ public class DiscountDAOImpl implements DiscountDAO {
         if (imageFile != null && !imageFile.isEmpty()) {
             try {
                 fileName = Paths.get(imageFile.getOriginalFilename()).getFileName().toString();
-                String relativePath = "/web/assets/admin/images/uploads/discount/";
-                String uploadPath = new File(servletContext.getRealPath("")).getParentFile().getParentFile().getAbsolutePath() + relativePath;
+                // Fix path resolution for Docker container
+                String webAppPath = servletContext.getRealPath("");
+                String uploadPath;
+                if (webAppPath != null) {
+                    // Running in container or deployed environment
+                    uploadPath = webAppPath + "/assets/admin/images/uploads/discount/";
+                } else {
+                    // Fallback for development
+                    String relativePath = "/web/assets/admin/images/uploads/discount/";
+                    uploadPath = new File(servletContext.getRealPath("")).getParentFile().getParentFile().getAbsolutePath() + relativePath;
+                }
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
                     uploadDir.mkdirs();

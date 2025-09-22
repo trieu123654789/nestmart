@@ -127,8 +127,17 @@ public class ProductsDAOImpl implements ProductsDAO {
         }
 
         List<ProductImage> image = new ArrayList<>();
-        String uploadPath = new File(servletContext.getRealPath("")).getParentFile().getParentFile()
-                .getAbsolutePath() + "/web/assets/admin/images/uploads/products/";
+        // Fix path resolution for Docker container
+        String webAppPath = servletContext.getRealPath("");
+        String uploadPath;
+        if (webAppPath != null) {
+            // Running in container or deployed environment
+            uploadPath = webAppPath + "/assets/admin/images/uploads/products/";
+        } else {
+            // Fallback for development
+            uploadPath = new File(servletContext.getRealPath("")).getParentFile().getParentFile()
+                    .getAbsolutePath() + "/web/assets/admin/images/uploads/products/";
+        }
 
         try {
             if (imageFiles != null && !imageFiles.isEmpty()) {
@@ -218,8 +227,17 @@ public class ProductsDAOImpl implements ProductsDAO {
             throw new RuntimeException("Discount cannot be negative.");
         }
 
-        String relativePath = "/web/assets/admin/images/uploads/products/";
-        String uploadPath = new File(servletContext.getRealPath("")).getParentFile().getParentFile().getAbsolutePath() + relativePath;
+        // Fix path resolution for Docker container
+        String webAppPath = servletContext.getRealPath("");
+        String uploadPath;
+        if (webAppPath != null) {
+            // Running in container or deployed environment
+            uploadPath = webAppPath + "/assets/admin/images/uploads/products/";
+        } else {
+            // Fallback for development
+            String relativePath = "/web/assets/admin/images/uploads/products/";
+            uploadPath = new File(servletContext.getRealPath("")).getParentFile().getParentFile().getAbsolutePath() + relativePath;
+        }
 
         List<String> existingImages = jdbcTemplate.queryForList(
                 "SELECT Image FROM ProductImage WHERE ProductID = ?",

@@ -50,9 +50,10 @@ public class ProductsController {
     @Autowired
     private BrandsDAO brandsDAO;
 
-    // Initialize LocalDateTime binder
+    // Initialize LocalDateTime and BigDecimal binders
     @InitBinder
     public void initBinder(WebDataBinder binder) {
+        // LocalDateTime binder
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         binder.registerCustomEditor(LocalDateTime.class, new PropertyEditorSupport() {
             @Override
@@ -70,6 +71,9 @@ public class ProductsController {
                 return (value != null) ? value.format(formatter) : "";
             }
         });
+        
+        // BigDecimal binder to handle comma-formatted numbers
+        binder.registerCustomEditor(BigDecimal.class, new CustomBigDecimalEditor());
     }
 
     // Display list of products with pagination and search
@@ -212,11 +216,6 @@ public class ProductsController {
             Model model) {
 
         try {
-            if (product.getUnitPrice() != null) {
-                BigDecimal unitPrice = new BigDecimal(product.getUnitPrice().toString().replace(",", ""));
-                product.setUnitPrice(unitPrice);
-            }
-
             productsDAO.update(product, imageFiles, imagesToDelete, request.getServletContext());
             redirectAttributes.addFlashAttribute("successMessage", "Product updated successfully!");
             return "redirect:/admin/products.htm";

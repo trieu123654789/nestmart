@@ -29,6 +29,9 @@ RUN mkdir -p /app
 COPY web/WEB-INF/application.properties /app/application.properties
 COPY web/WEB-INF/jdbc.properties /app/jdbc.properties
 
+# Create uploads directories (will be created after WAR extraction)
+RUN mkdir -p /tmp/upload-setup
+
 # Set environment variables for Railway
 ENV PORT=8080
 ENV JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
@@ -37,5 +40,24 @@ ENV JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom"
 EXPOSE 8080
 
 
-# Start Tomcat
-CMD ["catalina.sh", "run"]
+# Create a startup script that handles WAR extraction and upload directories
+RUN echo '#!/bin/bash' > /startup.sh && \
+    echo 'set -e' >> /startup.sh && \
+    echo 'cd /usr/local/tomcat/webapps' >> /startup.sh && \
+    echo 'if [ -f "nestmart.war" ] && [ ! -f "nestmart/.extracted" ]; then' >> /startup.sh && \
+    echo '  if [ -d "nestmart" ]; then' >> /startup.sh && \
+    echo '    find nestmart -type f ! -path "nestmart/assets/admin/images/uploads/*" -delete 2>/dev/null || true' >> /startup.sh && \
+    echo '    find nestmart -type d -empty -delete 2>/dev/null || true' >> /startup.sh && \
+    echo '  fi' >> /startup.sh && \
+    echo '  mkdir -p nestmart && cd nestmart' >> /startup.sh && \
+    echo '  jar -xf ../nestmart.war' >> /startup.sh && \
+    echo '  touch .extracted' >> /startup.sh && \
+    echo '  mkdir -p assets/admin/images/uploads/{products,discount}' >> /startup.sh && \
+    echo '  chmod -R 777 assets/admin/images/uploads/' >> /startup.sh && \
+    echo '  cd ..' >> /startup.sh && \
+    echo 'fi' >> /startup.sh && \
+    echo 'exec catalina.sh run' >> /startup.sh && \
+    chmod +x /startup.sh
+
+# Use the startup script
+CMD ["/startup.sh"]

@@ -1,13 +1,13 @@
 package com.controllers;
+import java.beans.PropertyEditorSupport;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
-import org.springframework.beans.propertyeditors.PropertiesEditor;
 
-public class CustomBigDecimalEditor extends PropertiesEditor {
+public class CustomBigDecimalEditor extends PropertyEditorSupport {
 
     @Override
 public void setAsText(String text) throws IllegalArgumentException {

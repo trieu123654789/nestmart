@@ -90,7 +90,7 @@
             }
             .table-actions {
                 position: relative;
-                display: flex;
+                display: fix;
                 justify-content: center;
                 align-items: center;
                 gap: 5px;
@@ -124,6 +124,10 @@
             }
             .table td {
                 vertical-align: middle; /* Center-align text vertically in table cells */
+            }
+             .btn-container {
+                display: flex;
+                gap: 10px; /* Khoảng cách giữa các nút */
             }
         </style>
     </head>
@@ -289,6 +293,8 @@
                                 <td>${schedule.weekStartDate}</td>
                                 <td>${schedule.weekEndDate}</td>
                                 <td class="table-actions">
+                                                                                <div class="btn-container">
+
                                     <a href="../admin/scheduleDetails.htm?weekScheduleID=${schedule.weekScheduleID}" class="btn btn-view" title="View Details">
                                         <i data-feather="eye"></i>
                                     </a>
@@ -299,7 +305,7 @@
                                             <i data-feather="trash-2"></i>
                                         </button>
                                     </form>
-
+                                                                                </div>
                                 </td>
                                 </tr>
                             </c:forEach>

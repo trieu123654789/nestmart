@@ -2,6 +2,7 @@ package com.controllers;
 
 import com.models.Accounts;
 import com.models.AccountsDAO;
+import com.services.PasswordService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class ChangeInforController {
 
     @Autowired
     private AccountsDAO accountDAO;
+    
+    @Autowired
+    private PasswordService passwordService;
 
     // Display admin account information page
     @RequestMapping(value = "admin/accountInformation", method = RequestMethod.GET)
@@ -96,7 +100,8 @@ public class ChangeInforController {
             return "redirect:/login.htm";
         }
 
-        if (!oldPassword.equals(existingAccount.getPassword())) {
+        // Use PasswordService to verify old password
+        if (!passwordService.verifyPassword(oldPassword, existingAccount.getPassword())) {
             redirectAttributes.addFlashAttribute("error", "Incorrect old password.");
             return "redirect:/admin/changePassword.htm";
         }
@@ -111,7 +116,9 @@ public class ChangeInforController {
             return "redirect:/admin/changePassword.htm";
         }
 
-        existingAccount.setPassword(newPassword);
+        // Hash new password using PasswordService
+        String hashedNewPassword = passwordService.hashPassword(newPassword);
+        existingAccount.setPassword(hashedNewPassword);
         accountDAO.update(existingAccount);
         redirectAttributes.addFlashAttribute("message", "Password updated successfully.");
         return "redirect:/admin/account.htm";
@@ -193,7 +200,8 @@ public class ChangeInforController {
             return "redirect:/login.htm";
         }
 
-        if (!oldPassword.equals(existingAccount.getPassword())) {
+        // Use PasswordService to verify old password
+        if (!passwordService.verifyPassword(oldPassword, existingAccount.getPassword())) {
             redirectAttributes.addFlashAttribute("error", "Incorrect old password.");
             return "redirect:/employee/changePassword.htm";
         }
@@ -208,7 +216,9 @@ public class ChangeInforController {
             return "redirect:/employee/changePassword.htm";
         }
 
-        existingAccount.setPassword(newPassword);
+        // Hash new password using PasswordService
+        String hashedNewPassword = passwordService.hashPassword(newPassword);
+        existingAccount.setPassword(hashedNewPassword);
         accountDAO.update(existingAccount);
         redirectAttributes.addFlashAttribute("message", "Password updated successfully.");
         return "redirect:/employee/index.htm";
@@ -290,7 +300,8 @@ public class ChangeInforController {
             return "redirect:/login.htm";
         }
 
-        if (!oldPassword.equals(existingAccount.getPassword())) {
+        // Use PasswordService to verify old password
+        if (!passwordService.verifyPassword(oldPassword, existingAccount.getPassword())) {
             redirectAttributes.addFlashAttribute("error", "Incorrect old password.");
             return "redirect:/shipper/changePassword.htm";
         }
@@ -305,7 +316,9 @@ public class ChangeInforController {
             return "redirect:/shipper/changePassword.htm";
         }
 
-        existingAccount.setPassword(newPassword);
+        // Hash new password using PasswordService
+        String hashedNewPassword = passwordService.hashPassword(newPassword);
+        existingAccount.setPassword(hashedNewPassword);
         accountDAO.update(existingAccount);
         redirectAttributes.addFlashAttribute("message", "Password updated successfully.");
         return "redirect:/shipper/index.htm";
@@ -387,7 +400,8 @@ public class ChangeInforController {
             return "redirect:/login.htm";
         }
 
-        if (!oldPassword.equals(existingAccount.getPassword())) {
+        // Use PasswordService to verify old password
+        if (!passwordService.verifyPassword(oldPassword, existingAccount.getPassword())) {
             redirectAttributes.addFlashAttribute("error", "Incorrect old password.");
             return "redirect:/client/changePassword.htm";
         }
@@ -402,7 +416,9 @@ public class ChangeInforController {
             return "redirect:/client/changePassword.htm";
         }
 
-        existingAccount.setPassword(newPassword);
+        // Hash new password using PasswordService
+        String hashedNewPassword = passwordService.hashPassword(newPassword);
+        existingAccount.setPassword(hashedNewPassword);
         accountDAO.update(existingAccount);
         redirectAttributes.addFlashAttribute("successMessage", "Password updated successfully.");
         return "redirect:/client/clientboard.htm";

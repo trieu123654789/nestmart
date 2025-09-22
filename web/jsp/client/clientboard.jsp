@@ -1,4 +1,5 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -587,10 +588,9 @@
                                                                 <c:if test="${status.index == 0}">
                                                                     <div class="image-container">
                                                                         <a href="../client/productDetails.htm?productID=${product.productID}" class="link-to-product">
-                                                                            <img src="../assets/client/images/uploads/products/${image.images}" 
+                                                                            <img src="../assets/admin/images/uploads/products/${image.images}" 
                                                                                  alt="${product.productName}" width="250" height="250" class="product-thumbnail"/>
                                                                         </a>
-
                                                                     </div>
                                                                 </c:if>
                                                             </c:forEach>
@@ -610,21 +610,33 @@
                                                                 <c:when test="${product.discount > 0}">
                                                                     <p>
                                                                         <span class="original-price1">
-                                                                            <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                            <fmt:formatNumber value="${product.unitPrice}" 
+                                                                                              type="number" 
+                                                                                              minFractionDigits="2" 
+                                                                                              maxFractionDigits="2" 
+                                                                                              groupingUsed="true" />$
                                                                         </span>
                                                                         <span class="discounted-price1">
-                                                                            <fmt:formatNumber value="${product.discount}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                            <fmt:formatNumber value="${product.discount}" 
+                                                                                              type="number" 
+                                                                                              minFractionDigits="2" 
+                                                                                              maxFractionDigits="2" 
+                                                                                              groupingUsed="true" />$
                                                                         </span>
                                                                     </p>
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <p class="original-price2">
-                                                                        <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                        <fmt:formatNumber value="${product.unitPrice}" 
+                                                                                          type="number" 
+                                                                                          minFractionDigits="2" 
+                                                                                          maxFractionDigits="2" 
+                                                                                          groupingUsed="true" />$
                                                                     </p>
                                                                 </c:otherwise>
                                                             </c:choose>
-                                                            <p>
 
+                                                            <p>
                                                             <div style="display: flex;
                                                                  align-items: center;
                                                                  justify-content: center;
@@ -634,7 +646,10 @@
                                                                 <span class="badge bg-success" style="margin-right: 10px;">
                                                                     <c:choose>
                                                                         <c:when test="${product.averageRating > 0}">
-                                                                            <fmt:formatNumber value="${product.averageRating}" type="number" maxFractionDigits="1" />
+                                                                            <fmt:formatNumber value="${product.averageRating}" 
+                                                                                              type="number" 
+                                                                                              minFractionDigits="1" 
+                                                                                              maxFractionDigits="1" />
                                                                             <img src="../assets/client/images/star-16.png" alt="Feedback Star" style="vertical-align: middle;">
                                                                         </c:when>
                                                                         <c:otherwise>
@@ -648,16 +663,14 @@
                                                                      margin: 0 10px;"></div>
                                                                 <span class="badge bg-light">Sold: ${product.totalQuantitySold}</span>
                                                             </div>
-
                                                             </p>
-
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>
                                         </li>
                                     </c:forEach>
+
                                 </ul>
                             </c:if>
                             <div class="text-center" style="margin-top: 20px;">
@@ -724,16 +737,28 @@
                                                                         <c:when test="${product.discount > 0}">
                                                                             <p>
                                                                                 <span class="original-price1">
-                                                                                    <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                                    <fmt:formatNumber value="${product.unitPrice}" 
+                                                                                                      type="number" 
+                                                                                                      minFractionDigits="2" 
+                                                                                                      maxFractionDigits="2" 
+                                                                                                      groupingUsed="true" />$
                                                                                 </span>
                                                                                 <span class="discounted-price1">
-                                                                                    <fmt:formatNumber value="${product.discount}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                                    <fmt:formatNumber value="${product.discount}" 
+                                                                                                      type="number" 
+                                                                                                      minFractionDigits="2" 
+                                                                                                      maxFractionDigits="2" 
+                                                                                                      groupingUsed="true" />$
                                                                                 </span>
                                                                             </p>
                                                                         </c:when>
                                                                         <c:otherwise>
                                                                             <p class="original-price2">
-                                                                                <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                                <fmt:formatNumber value="${product.unitPrice}" 
+                                                                                                  type="number" 
+                                                                                                  minFractionDigits="2" 
+                                                                                                  maxFractionDigits="2" 
+                                                                                                  groupingUsed="true" />$
                                                                             </p>
                                                                         </c:otherwise>
                                                                     </c:choose>
@@ -742,7 +767,10 @@
                                                                         <span class="badge bg-success" style="margin-right: 10px;">
                                                                             <c:choose>
                                                                                 <c:when test="${product.averageRating > 0}">
-                                                                                    <fmt:formatNumber value="${product.averageRating}" type="number" maxFractionDigits="1" />
+                                                                                    <fmt:formatNumber value="${product.averageRating}" 
+                                                                                                      type="number" 
+                                                                                                      minFractionDigits="1" 
+                                                                                                      maxFractionDigits="1" />
                                                                                     <img src="../assets/client/images/star-16.png" alt="Feedback Star" style="vertical-align: middle;">
                                                                                 </c:when>
                                                                                 <c:otherwise>No feedback</c:otherwise>
@@ -773,6 +801,7 @@
                                     </a>
                                 </div>
                             </c:when>
+
 
                             <c:otherwise>
 

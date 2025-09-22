@@ -2,6 +2,7 @@ package com.controllers;
 
 import com.models.Accounts;
 import com.models.AccountsDAO;
+import com.services.PasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -29,6 +30,9 @@ public class SignUpController {
 
     @Autowired
     private AccountsDAO accountsDAO;
+    
+    @Autowired
+    private PasswordService passwordService;
 
     // Display the registration form
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
@@ -103,8 +107,11 @@ public class SignUpController {
             return "/signup";
         }
 
+        // Hash the password using PasswordService
+        String hashedPassword = passwordService.hashPassword(password);
+        
         Date sqlBirthday = Date.valueOf(birthday);
-        Accounts newAccount = new Accounts(0, phoneNumber, password, email, 4, gender, fullName, sqlBirthday, address, BigDecimal.ZERO);
+        Accounts newAccount = new Accounts(0, phoneNumber, hashedPassword, email, 4, gender, fullName, sqlBirthday, address, BigDecimal.ZERO);
 
         try {
             accountsDAO.save(newAccount);

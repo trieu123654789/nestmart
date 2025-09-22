@@ -217,7 +217,7 @@
         .fa {
             font-family: FontAwesome !important;
         }
-        
+
         @media (max-width: 1200px) {
             .products-list {
                 grid-template-columns: repeat(4, 1fr);
@@ -483,16 +483,28 @@
                                                                         <c:when test="${product.discount > 0}">
                                                                             <p>
                                                                                 <span class="original-price1">
-                                                                                    <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                                    <fmt:formatNumber value="${product.unitPrice}" 
+                                                                                                      type="number" 
+                                                                                                      minFractionDigits="2" 
+                                                                                                      maxFractionDigits="2" 
+                                                                                                      groupingUsed="true" />$
                                                                                 </span>
                                                                                 <span class="discounted-price1">
-                                                                                    <fmt:formatNumber value="${product.discount}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                                    <fmt:formatNumber value="${product.discount}" 
+                                                                                                      type="number" 
+                                                                                                      minFractionDigits="2" 
+                                                                                                      maxFractionDigits="2" 
+                                                                                                      groupingUsed="true" />$
                                                                                 </span>
                                                                             </p>
                                                                         </c:when>
                                                                         <c:otherwise>
                                                                             <p class="original-price2">
-                                                                                <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                                <fmt:formatNumber value="${product.unitPrice}" 
+                                                                                                  type="number" 
+                                                                                                  minFractionDigits="2" 
+                                                                                                  maxFractionDigits="2" 
+                                                                                                  groupingUsed="true" />$
                                                                             </p>
                                                                         </c:otherwise>
                                                                     </c:choose>
@@ -517,19 +529,15 @@
                                                                         <c:if test="${product.quantity == 0}">
                                                                             <span class="sold-out-badge">SOLD OUT</span>
                                                                         </c:if>
-
-
-
                                                                     </div>
-
                                                                 </c:if>
                                                             </div>
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </li>
                                         </c:forEach>
+
                                     </ul>
                                 </div>
 

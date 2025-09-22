@@ -450,4 +450,83 @@ public class ShippersController {
         
         return "/shipper/printWeekPayroll";
     }
+    // Add this method to your ShippersController.java
+@RequestMapping(value = "/checkNewOrders.htm", method = RequestMethod.GET)
+@ResponseBody
+public void checkNewOrders(@RequestParam("accountId") Integer accountId,
+                          @RequestParam("lastCount") Integer lastCount,
+                          HttpSession session,
+                          HttpServletResponse response) throws IOException {
+    
+    // Set response content type explicitly
+    response.setContentType("application/xml; charset=UTF-8");
+    response.setCharacterEncoding("UTF-8");
+    
+    StringBuilder xml = new StringBuilder();
+    xml.append("<?xml version='1.0' encoding='UTF-8'?>");
+    xml.append("<response>");
+    
+    try {
+        // Check role authorization
+        if (!RoleUtils.hasRequiredRole(session, 3)) {
+            xml.append("<hasNewOrders>false</hasNewOrders>");
+            xml.append("<totalOrders>0</totalOrders>");
+            xml.append("<error>Not authorized</error>");
+            xml.append("</response>");
+            response.getWriter().write(xml.toString());
+            response.getWriter().flush();
+            return;
+        }
+
+        // Get current orders for this shipper
+        List<Orders> currentOrders = orderDAO.searchAndFilterOrders(accountId, null, null, null);
+        int currentCount = currentOrders != null ? currentOrders.size() : 0;
+        
+        // Check if there are new orders
+        boolean hasNewOrders = currentCount > lastCount;
+        int newOrdersCount = hasNewOrders ? (currentCount - lastCount) : 0;
+        
+        xml.append("<hasNewOrders>").append(hasNewOrders).append("</hasNewOrders>");
+        xml.append("<totalOrders>").append(currentCount).append("</totalOrders>");
+        xml.append("<newOrdersCount>").append(newOrdersCount).append("</newOrdersCount>");
+        
+        // If there are new orders, include details of the latest one
+        if (hasNewOrders && currentOrders != null && !currentOrders.isEmpty()) {
+            Orders latestOrder = currentOrders.get(0);
+            xml.append("<latestOrder>");
+            xml.append("<orderID>").append(latestOrder.getOrderID()).append("</orderID>");
+            xml.append("<customerName>").append(escapeXml(latestOrder.getCustomerName())).append("</customerName>");
+            xml.append("<totalAmount>").append(latestOrder.getTotalAmount()).append("</totalAmount>");
+            xml.append("<orderStatus>").append(escapeXml(latestOrder.getOrderStatus())).append("</orderStatus>");
+            xml.append("</latestOrder>");
+        }
+        
+        System.out.println("XML Response: " + xml.toString()); // Debug log
+        
+    } catch (Exception e) {
+        System.err.println("Error in checkNewOrders: " + e.getMessage());
+        e.printStackTrace();
+        xml.append("<hasNewOrders>false</hasNewOrders>");
+        xml.append("<totalOrders>0</totalOrders>");
+        xml.append("<error>").append(escapeXml(e.getMessage())).append("</error>");
+    }
+    
+    xml.append("</response>");
+    
+    // Write response
+    PrintWriter writer = response.getWriter();
+    writer.write(xml.toString());
+    writer.flush();
+    writer.close();
+}
+
+// Helper method to escape XML special characters
+private String escapeXml(String input) {
+    if (input == null) return "";
+    return input.replace("&", "&amp;")
+               .replace("<", "&lt;")
+               .replace(">", "&gt;")
+               .replace("\"", "&quot;")
+               .replace("'", "&apos;");
+}
 }

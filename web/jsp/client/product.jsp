@@ -14,7 +14,7 @@
         <link href="https://fonts.googleapis.com/css?family=Poppins:600&amp;display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400i,700i" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css?family=Ubuntu&amp;display=swap" rel="stylesheet" />
-        <link rel="shortcut icon" type="image/x-icon" href="../assets/client/images/NestMart_icon.png" />
+        <link rel="shortcut icon" type="image/x-icon" href="../assets/admin/images/NestMart_icon.png" />
         <link rel="stylesheet" href="../assets/client/css/bootstrap.min.css" />
         <link rel="stylesheet" href="../assets/client/css/animate.min.css" />
         <link rel="stylesheet" href="../assets/client/css/font-awesome.min.css" />
@@ -310,11 +310,11 @@
                 text-align: center;
                 font-size: 16px;
             }
-            
+
         }
-        
+
         @media (max-width: 480px) {
-            
+
             .products-list {
                 grid-template-columns: 1fr 1fr !important;
                 gap: 6px !important;
@@ -472,9 +472,9 @@
                 max-height: 100px !important;
                 margin: 5px !important;
             }
-            
+
         }
-       
+
     </style>
     <body class="nestmart-body">
         <div id="biof-loading">
@@ -548,7 +548,7 @@
                                                                     <c:if test="${status.index == 0}">
                                                                         <div class="image-container">
                                                                             <a href="../client/productDetails.htm?productID=${product.productID}" class="link-to-product">
-                                                                                <img src="../assets/client/images/uploads/products/${image.images}" 
+                                                                                <img src="../assets/admin/images/uploads/products/${image.images}" 
                                                                                      alt="${product.productName}" width="250" height="250" class="product-thumbnail"/>
                                                                             </a>
 
@@ -572,18 +572,19 @@
                                                                         <c:when test="${product.discount > 0}">
                                                                             <p>
                                                                                 <span class="original-price1">
-                                                                                    <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                                    <fmt:formatNumber value="${product.unitPrice}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                                                                 </span>
                                                                                 <span class="discounted-price1">
-                                                                                    <fmt:formatNumber value="${product.discount}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                                    <fmt:formatNumber value="${product.discount}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                                                                 </span>
                                                                             </p>
                                                                         </c:when>
                                                                         <c:otherwise>
                                                                             <p class="original-price2">
-                                                                                <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                                <fmt:formatNumber value="${product.unitPrice}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                                                             </p>
                                                                         </c:otherwise>
+
                                                                     </c:choose>
                                                                     <div style="display: flex; align-items: center; justify-content: center;
                                                                          background-color: #f8f9fa; padding: 10px; border-radius: 5px;">
@@ -591,7 +592,7 @@
                                                                             <c:choose>
                                                                                 <c:when test="${product.averageRating > 0}">
                                                                                     <fmt:formatNumber value="${product.averageRating}" type="number" maxFractionDigits="1" />
-                                                                                    <img src="../assets/client/images/star-16.png" alt="Feedback Star" style="vertical-align: middle;">
+                                                                                    <img src="../assets/admin/images/star-16.png" alt="Feedback Star" style="vertical-align: middle;">
                                                                                 </c:when>
                                                                                 <c:otherwise>No feedback</c:otherwise>
                                                                             </c:choose>

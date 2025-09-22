@@ -384,10 +384,8 @@
 
 
         <script>
-            // SỬA DÒNG NÀY TRONG JSP - thay đổi cách kiểm tra session
             let isUserLoggedIn = ${sessionScope.accountId != null ? 'true' : 'false'};
 
-            // Hàm kiểm tra trạng thái đăng nhập thời gian thực
             function checkLoginStatus() {
                 return new Promise((resolve) => {
                     $.ajax({
@@ -408,20 +406,17 @@
                 });
             }
 
-            // Hàm vô hiệu hóa form chat
             function disableChatForm() {
-                document.querySelector('#chat-form textarea').placeholder = 'Vui lòng đăng nhập để gửi tin nhắn...';
+                document.querySelector('#chat-form textarea').placeholder = 'Please login to send a message...';
                 document.querySelector('#chat-form textarea').disabled = true;
                 document.getElementById('send-button').disabled = true;
             }
 
-            // Hàm kích hoạt form chat
             function enableChatForm() {
                 document.querySelector('#chat-form textarea').placeholder = 'Type your message...';
                 document.querySelector('#chat-form textarea').disabled = false;
                 document.getElementById('send-button').disabled = false;
 
-                // Xóa thông báo đăng nhập nếu có
                 const loginMsg = document.querySelector('.login-required-message');
                 if (loginMsg) {
                     loginMsg.remove();
@@ -433,26 +428,20 @@
                 const chatWidget = document.getElementById('chat-widget');
                 const messageBadge = document.getElementById('message-badge');
 
-                // Kiểm tra trạng thái hiện tại
                 const isVisible = chatBox.classList.contains('chat-open');
 
                 if (!isVisible) {
-                    // Mở chat box
                     chatBox.style.display = 'block';
 
-                    // Thêm class để trigger animation
                     setTimeout(() => {
                         chatBox.classList.add('chat-open');
                     }, 10);
 
-                    // Reset badge về 0 khi mở chat
                     messageBadge.textContent = '0';
 
-                    // Thay đổi icon sang close
                     chatWidget.querySelector('i').className = 'fas fa-times';
                     chatWidget.querySelector('span:not(.badge)').textContent = 'Close';
 
-                    // KIỂM TRA TRẠNG THÁI ĐĂNG NHẬP THỜI GIAN THỰC
                     const loggedIn = await checkLoginStatus();
 
                     if (!loggedIn) {
@@ -464,23 +453,19 @@
                         enableChatForm();
                     }
 
-                    // Scroll to bottom khi mở chat
                     setTimeout(() => {
                         scrollToBottom();
-                        // Focus vào textarea nếu đã đăng nhập
                         const textarea = chatBox.querySelector('textarea');
                         if (textarea && !textarea.disabled) {
                             textarea.focus();
                         }
                     }, 300);
 
-                    // Mark tất cả messages là đã seen (chỉ khi đã đăng nhập)
                     if (loggedIn) {
                         markAllMessagesAsSeen();
                     }
 
                 } else {
-                    // Đóng chat box
                     chatBox.classList.remove('chat-open');
 
                     setTimeout(() => {
@@ -497,7 +482,6 @@
                 }
             }
 
-            // Hàm đánh dấu tất cả tin nhắn là đã xem
             function markAllMessagesAsSeen() {
                 const messages = document.querySelectorAll('.chat-messages .message');
                 messages.forEach(message => {
@@ -505,7 +489,6 @@
                 });
             }
 
-            // Hàm mở chat từ bên ngoài (có thể gọi từ notification)
             function openChat() {
                 const chatBox = document.getElementById('chat-box');
                 if (!chatBox.classList.contains('chat-open')) {
@@ -513,7 +496,6 @@
                 }
             }
 
-            // Hàm đóng chat từ bên ngoài
             function closeChat() {
                 const chatBox = document.getElementById('chat-box');
                 if (chatBox.classList.contains('chat-open')) {
@@ -527,11 +509,9 @@
                 document.head.appendChild(styleSheet);
             }
 
-            // Gọi hàm khi document ready
             document.addEventListener('DOMContentLoaded', function () {
                 addImprovedStyles();
 
-                // Thêm keyboard shortcut (Esc để đóng chat)
                 document.addEventListener('keydown', function (e) {
                     if (e.key === 'Escape') {
                         const chatBox = document.getElementById('chat-box');
@@ -541,7 +521,6 @@
                     }
                 });
 
-                // Click outside để đóng chat (optional)
                 document.addEventListener('click', function (e) {
                     const chatBox = document.getElementById('chat-box');
                     const chatWidget = document.getElementById('chat-widget');
@@ -549,7 +528,6 @@
                     if (chatBox.classList.contains('chat-open') &&
                             !chatBox.contains(e.target) &&
                             !chatWidget.contains(e.target)) {
-                        // Uncomment dòng dưới nếu muốn click outside để đóng chat
                         // closeChat();
                     }
                 });
@@ -593,7 +571,6 @@
 
                             console.log("Processing message:", {messageId, messageText, status, isFromEmployee});
 
-                            // Check if the message ID is valid and not already processed
                             if (!messageIdText || isNaN(messageId) || processedMessageIds.has(messageId)) {
                                 return;
                             }
@@ -610,7 +587,6 @@
                             addMessageToChat(messageText, isFromEmployee, timestamp, messageId, status);
                             lastMessageId = Math.max(lastMessageId, messageId);
 
-                            // Check if the conversation is closed
                             if (status === 'Closed' && messageText === 'Complete conversation by employee') {
                                 console.log("Conversation closed message received");
                                 handleClosedConversation();
@@ -630,9 +606,7 @@
                 $('#chat-form textarea').prop('disabled', true);
                 $('#send-button').prop('disabled', true);
 
-                // Check if the closed message is already displayed
                 if (!document.querySelector('.message.system')) {
-                    // Display a message to the user only if it's not already there
                     const chatMessages = document.querySelector('.chat-messages');
                     const closedMessage = document.createElement('div');
                     closedMessage.className = 'message system';
@@ -640,7 +614,6 @@
                     chatMessages.appendChild(closedMessage);
                 }
 
-                // Stop polling for new messages
                 clearInterval(pollingInterval);
             }
 
@@ -648,11 +621,9 @@
                 return document.querySelector(`.message[data-message-id="${messageId}"]`) !== null;
             }
 
-            // Modify the addMessageToChat function to prevent duplicate messages
             function addMessageToChat(message, isFromEmployee, timestamp, messageId, status) {
                 console.log("Adding message to chat:", {message, isFromEmployee, timestamp, messageId, status});
 
-                // Check if the message already exists
                 if (isMessageAlreadyDisplayed(messageId)) {
                     console.log("Message already displayed, skipping:", message);
                     return;
@@ -676,7 +647,6 @@
                 chatMessages.appendChild(messageElement);
                 scrollToBottom();
 
-                // If this is the "Complete conversation by employee" message, handle it only once
                 if (isFromEmployee && message === 'Complete conversation by employee' && status === 'Closed') {
                     console.log("Calling handleClosedConversation from addMessageToChat");
                     handleClosedConversation();
@@ -693,9 +663,7 @@
                 console.log("Scrolled to bottom");
             }
 
-            // CẬP NHẬT HÀM sendMessage với kiểm tra session thời gian thực
             async function sendMessage() {
-                // Kiểm tra đăng nhập thời gian thực
                 const loggedIn = await checkLoginStatus();
 
                 if (!loggedIn) {
@@ -731,7 +699,6 @@
                             } else if (status === 'error') {
                                 const errorMsg = $(response).find('message').text();
                                 if (errorMsg === 'Session expired') {
-                                    // Session hết hạn, cập nhật trạng thái
                                     isUserLoggedIn = false;
                                     showLoginRequiredMessage();
                                     disableChatForm();
@@ -743,7 +710,6 @@
                         },
                         error: function (xhr, status, error) {
                             console.error("Error sending message:", error);
-                            // Kiểm tra lại login status nếu có lỗi
                             checkLoginStatus().then(loggedIn => {
                                 if (!loggedIn) {
                                     disableChatForm();
@@ -758,17 +724,16 @@
             function showLoginRequiredMessage() {
                 const chatMessages = document.querySelector('.chat-messages');
 
-                // Kiểm tra xem thông báo đã tồn tại chưa
                 if (document.querySelector('.login-required-message')) {
                     return;
                 }
 
                 const loginMessage = document.createElement('div');
                 loginMessage.className = 'message system login-required-message';
-                loginMessage.innerHTML = `
-            <p><i class="fas fa-lock"></i> Bạn cần đăng nhập để gửi tin nhắn</p>
+                loginMessage.innerHTML = `  
+            <p><i class="fas fa-lock"></i> You need to login to send a message</p>
             <button onclick="redirectToLogin()" class="login-btn">
-                <i class="fas fa-sign-in-alt"></i> Đăng nhập ngay
+                <i class="fas fa-sign-in-alt"></i> Login
             </button>
         `;
 
@@ -776,9 +741,8 @@
                 scrollToBottom();
             }
 
-            // Thêm function redirect đến trang đăng nhập
             function redirectToLogin() {
-                window.location.href = '../login.htm'; // Thay đổi URL theo trang đăng nhập của bạn
+                window.location.href = '../login.htm'; 
             }
 
             function updateUnreadMessageCount() {
@@ -796,7 +760,6 @@
 
             let pollingInterval;
 
-            // CẬP NHẬT startPolling với kiểm tra login status định kỳ
             async function startPolling() {
                 console.log("Starting polling");
 
@@ -811,7 +774,6 @@
                             fetchMessages();
                             updateUnreadMessageCount();
                         } else {
-                            // Session hết hạn trong khi đang poll
                             disableChatForm();
                             clearInterval(pollingInterval);
                             console.log("Session expired, stopped polling");
@@ -822,11 +784,9 @@
                 }
             }
 
-            // CẬP NHẬT window.onload
             window.onload = async function () {
                 console.log("Window loaded");
 
-                // Kiểm tra trạng thái đăng nhập thời gian thực
                 const loggedIn = await checkLoginStatus();
                 console.log("User logged in status:", loggedIn);
 
