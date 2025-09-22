@@ -1,16 +1,29 @@
 # Dockerfile optimized for Railway deployment
 FROM openjdk:8-jdk-slim AS builder
 
-# Install Ant to build the WAR from source
-RUN apt-get update && apt-get install -y ant wget unzip && rm -rf /var/lib/apt/lists/*
+# Install tools needed to build the WAR manually
+RUN apt-get update && apt-get install -y wget bash && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy source to build the WAR
+# Copy project sources
 COPY . .
 
-# Build using Ant (outputs to dist/)
-RUN ant -f build.xml clean && ant -f build.xml
+# Build WAR without IDE server by compiling sources and assembling the webapp
+RUN wget -O /tmp/javax.servlet-api-3.1.0.jar \
+      https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar && \
+    mkdir -p build/classes build/webapp/WEB-INF/{classes,lib} dist && \
+    /bin/bash -lc 'set -e; \
+      CLASSPATH=$(echo lib/*.jar | tr " " ":"); \
+      CLASSPATH="$CLASSPATH:/tmp/javax.servlet-api-3.1.0.jar"; \
+      find src/java -name "*.java" > sources.txt; \
+      if [ -s sources.txt ]; then \
+        javac -encoding UTF-8 -source 1.8 -target 1.8 -cp "$CLASSPATH" -d build/classes @sources.txt; \
+      fi; \
+      cp -a web/. build/webapp/; \
+      cp -a build/classes/. build/webapp/WEB-INF/classes/ 2>/dev/null || true; \
+      cp -a lib/*.jar build/webapp/WEB-INF/lib/ 2>/dev/null || true; \
+      jar -cvf dist/nestmartappFinal.war -C build/webapp .'
 
 FROM tomcat:9.0-jdk8-openjdk-slim
 
