@@ -53,20 +53,9 @@ jobs:
           (cd build/webapp && jar -cvf ../../$WAR_PATH .)
           test -f $WAR_PATH
 
-      - name: Azure login (publish profile)
-        uses: azure/login@v2
-        with:
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-
-      - name: Stop app before deploy
-        run: az webapp stop --name $APP_NAME --resource-group $(az webapp show --name $APP_NAME --query resourceGroup -o tsv)
-
       - name: Deploy to Azure Web App (WAR)
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.APP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ${{ env.WAR_PATH }}
-
-      - name: Start app after deploy
-        run: az webapp start --name $APP_NAME --resource-group $(az webapp show --name $APP_NAME --query resourceGroup -o tsv)
