@@ -13,17 +13,19 @@ COPY . .
 # Build WAR without IDE server by compiling sources and assembling the webapp
 RUN wget -O /tmp/javax.servlet-api-3.1.0.jar \
       https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar && \
+    wget -O /tmp/javax.mail-api-1.6.2.jar \
+      https://repo1.maven.org/maven2/com/sun/mail/javax.mail/1.6.2/javax.mail-1.6.2.jar && \
     mkdir -p build/classes build/webapp/WEB-INF/{classes,lib} dist && \
     /bin/bash -lc 'set -e; \
-      CLASSPATH=$(echo lib/*.jar | tr " " ":"); \
-      CLASSPATH="$CLASSPATH:/tmp/javax.servlet-api-3.1.0.jar"; \
+      CLASSPATH=$(find lib -type f -name "*.jar" -printf "%p:"); \
+      CLASSPATH="$CLASSPATH/tmp/javax.servlet-api-3.1.0.jar:/tmp/javax.mail-api-1.6.2.jar"; \
       find src/java -name "*.java" > sources.txt; \
       if [ -s sources.txt ]; then \
         javac -encoding UTF-8 -source 1.8 -target 1.8 -cp "$CLASSPATH" -d build/classes @sources.txt; \
       fi; \
       cp -a web/. build/webapp/; \
+      find lib -type f -name "*.jar" -exec cp {} build/webapp/WEB-INF/lib/ \; 2>/dev/null || true; \
       cp -a build/classes/. build/webapp/WEB-INF/classes/ 2>/dev/null || true; \
-      cp -a lib/*.jar build/webapp/WEB-INF/lib/ 2>/dev/null || true; \
       jar -cvf dist/nestmartappFinal.war -C build/webapp .'
 
 FROM tomcat:9.0-jdk8-openjdk-slim
