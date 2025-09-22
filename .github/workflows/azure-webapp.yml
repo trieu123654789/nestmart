@@ -1,0 +1,52 @@
+﻿name: Deploy Java WAR to Azure Web App
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      APP_NAME: nestmart
+      WAR_PATH: dist/nestmartappFinal.war
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+
+      - name: Build WAR (manual compile and assemble)
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -y
+          sudo apt-get install -y wget findutils
+          mkdir -p build/classes build/webapp/WEB-INF/{classes,lib} dist
+          wget -O /tmp/javax.servlet-api-3.1.0.jar \
+            https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar
+          wget -O /tmp/javax.mail-1.6.2.jar \
+            https://repo1.maven.org/maven2/com/sun/mail/javax.mail/1.6.2/javax.mail-1.6.2.jar
+          CLASSPATH=$(find lib -type f -name "*.jar" -printf "%p:")
+          CLASSPATH="${CLASSPATH}/tmp/javax.servlet-api-3.1.0.jar:/tmp/javax.mail-1.6.2.jar"
+          find src/java -name "*.java" > sources.txt || true
+          if [ -s sources.txt ]; then
+            javac -encoding UTF-8 -source 1.8 -target 1.8 -cp "$CLASSPATH" -d build/classes @sources.txt
+          fi
+          cp -a web/. build/webapp/
+          find lib -type f -name "*.jar" -exec cp {} build/webapp/WEB-INF/lib/ \; || true
+          cp -a build/classes/. build/webapp/WEB-INF/classes/ || true
+          (cd build/webapp && jar -cvf ../../$WAR_PATH .)
+          test -f $WAR_PATH
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.APP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.WAR_PATH }}
