@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APP_NAME: nestmart
-      WAR_PATH: dist/nestmart.war
+      WAR_PATH: dist/nestmartappFinal.war
     steps:
       - name: Checkout
         uses: actions/checkout@v4
