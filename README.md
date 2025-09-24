@@ -1,138 +1,123 @@
-## Giới thiệu
+## Overview
 
-Ứng dụng web Java dựa trên Spring MVC (JSP/JSTL) đóng gói dưới dạng WAR. Dự án hỗ trợ build bằng Ant/PowerShell, chạy cục bộ trên Tomcat/GlassFish, và triển khai qua Docker hoặc Docker Compose. Repo này đã kèm đầy đủ `Dockerfile`, kịch bản build, và cấu hình mẫu JDBC.
+Java web application built with Spring MVC (JSP/JSTL), packaged as a WAR. The project supports Ant/PowerShell builds, runs locally on Tomcat or GlassFish, and ships Docker/Docker Compose for containerized deployment. JDBC configuration samples and multiple Dockerfiles are included.
 
-## Công nghệ chính
+## Tech Stack
 
-- **Ngôn ngữ/Runtime**: Java 8 (JRE/JDK 1.8)
-- **Framework**: Spring 4.3.x (Core, MVC, JDBC, Security)
+- **Language/Runtime**: Java 8 (JRE/JDK 1.8)
+- **Frameworks**: Spring 4.3.x (Core, MVC, JDBC), Spring Security 5.7
 - **View**: JSP + JSTL
-- **App server**: Tomcat 9 / GlassFish (tùy chọn)
+- **App Servers**: Tomcat 9 or GlassFish
 - **Build**: Apache Ant (`build.xml`) + PowerShell scripts
-- **Đóng gói**: WAR (`dist/nestmartappFinal.war`)
-- **CSDL**: SQL Server (driver `mssql-jdbc-12.2.0.jre8.jar`)
-- **Container**: Docker, Docker Compose
+- **Packaging**: WAR (`dist/nestmartappFinal.war`)
+- **Database**: SQL Server (driver `mssql-jdbc-12.2.0.jre8.jar`)
+- **Containers**: Docker, Docker Compose
 
-## Yêu cầu hệ thống
+## Key Features
 
-- JDK 8
-- Apache Ant 1.10+
-- Git
-- (Tùy chọn) Docker 20+ và Docker Compose
-- (Tùy chọn) Tomcat 9 hoặc GlassFish để chạy cục bộ ngoài Docker
+- CRUD for products, categories, users, and orders (search, pagination, validation)
+- Role‑based portals (admin, employee, shipper, client) with Spring Security
+- Shopping flow: cart, checkout, order processing/history, product image upload
+- Excel import/export (Apache POI), file uploads (Commons FileUpload)
+- Customer live chat widget (polling, unread counter, session check)
+- Password reset via email/SMS (Twilio)
 
-## Cấu trúc thư mục
+## Project Structure
 
 ```text
 c:\Projects\nestmart
-├─ src/                 # Mã nguồn Java, cấu hình MANIFEST
-├─ web/                 # Tài nguyên web tĩnh và JSP
-├─ lib/                 # Thư viện .jar (Spring, JDBC, JSTL, ...)
-├─ build/               # Thư mục build trung gian (Ant)
-├─ dist/                # WAR đầu ra (ví dụ: nestmartappFinal.war)
-├─ nbproject/           # Cấu hình NetBeans/Ant
-├─ Dockerfile*          # Nhiều biến thể Dockerfile
-├─ docker-compose.yml   # Chạy ứng dụng qua Compose
-├─ build.xml            # Kịch bản Ant
-├─ *.ps1                # Script PowerShell build/deploy
-└─ web/WEB-INF/         # `web.xml`, `dispatcher-servlet.xml`, cấu hình Spring
+├─ src/                 # Java sources
+├─ web/                 # Static assets and JSP pages
+├─ lib/                 # .jar dependencies (Spring, JDBC, JSTL, ...)
+├─ build/               # Ant intermediate build output
+├─ dist/                # Final WAR (e.g., nestmartappFinal.war)
+├─ nbproject/           # NetBeans/Ant configuration
+├─ Dockerfile*          # Multiple Dockerfile variants
+├─ docker-compose.yml   # Compose services definition
+├─ build.xml            # Ant build script
+├─ *.ps1                # PowerShell build/deploy helpers
+└─ web/WEB-INF/         # web.xml, dispatcher-servlet.xml, Spring configs
 ```
 
-## Cấu hình
+## Configuration
 
-- `web/WEB-INF/jdbc.properties` hoặc `web/WEB-INF/application.properties`
-  - Chỉnh thông số kết nối CSDL (URL, user, password, pool...).
+- `web/WEB-INF/jdbc.properties` or `web/WEB-INF/application.properties`
+  - Database connection (URL, username, password, pool, etc.)
 - `web/WEB-INF/applicationContext.xml`, `dispatcher-servlet.xml`
-  - Khai báo bean, datasource, view resolver, component scan, v.v.
-- Không commit thông tin nhạy cảm. Dùng biến môi trường/secret trong CI/CD nếu cần.
+  - Beans, datasource, view resolver, component scan, etc.
+- Keep secrets out of VCS; prefer environment variables/CI secrets.
+
 ## Build (Ant)
 
-Trên Windows PowerShell (đã cài Ant và JDK 8):
+From Windows PowerShell (with JDK 8 and Ant installed):
 
 ```powershell
-# Từ thư mục dự án
+# From project root
 ant clean war | cat
 
-# WAR sẽ được tạo trong dist/ (ví dụ: dist/nestmartappFinal.war)
+# WAR will be generated in dist/ (e.g., dist/nestmartappFinal.war)
 ```
 
-Script hỗ trợ:
+Helper scripts:
 
 ```powershell
-# Build nhanh
+# Quick build
 ./manual-build.ps1
 
-# Build và (tùy) deploy theo cấu hình script
+# Build and optional deploy per script settings
 ./build-and-deploy.ps1
 ```
 
-## Chạy cục bộ với Tomcat
+## Run Locally with Tomcat
 
-1. Cài Tomcat 9.
-2. Sao chép WAR từ `dist/*.war` vào `TOMCAT_HOME/webapps/`.
-3. Khởi động Tomcat và truy cập: `http://localhost:8080/<context-path>`.
+1. Install Tomcat 9
+2. Copy the WAR from `dist/*.war` to `TOMCAT_HOME/webapps/`
+3. Start Tomcat and open: `http://localhost:8080/<context-path>`
 
-Lưu ý: context-path thường là tên WAR (không đuôi `.war`). Kiểm tra log Tomcat nếu cần.
+Note: the context path defaults to the WAR file name (without `.war`). Check Tomcat logs if needed.
 
-## Chạy trong NetBeans với GlassFish
+## Run in NetBeans with GlassFish
 
-1. Mở dự án trong NetBeans (8.x/12.x).
-2. Thêm GlassFish vào NetBeans:
-   - Tools → Servers → Add Server → GlassFish Server → Next
-   - Chọn thư mục cài `GLASSFISH_HOME`, domain `domain1`
-   - Java Platform: chọn JDK 8
-3. Đặt GlassFish làm server chạy cho project:
-   - Chuột phải project → Properties → Run
-   - Server: chọn GlassFish Server
-   - Context Path: đặt `<context-path>` mong muốn (ví dụ `/app`)
-4. Cấu hình JDBC (nếu dùng SQL Server):
-   - Sao chép `lib/mssql-jdbc-12.2.0.jre8.jar` vào `GLASSFISH_HOME\glassfish\domains\domain1\lib`
-   - Khởi động GlassFish, mở Admin Console `http://localhost:4848`
-   - Tạo JDBC Connection Pool và JDBC Resource (nếu app dùng JNDI)
-   - Hoặc đảm bảo `web/WEB-INF/jdbc.properties` có thông tin kết nối đúng
-5. Chạy ứng dụng:
-   - Chuột phải project → Run (hoặc F6)
-   - NetBeans sẽ build WAR và deploy lên GlassFish
-   - Truy cập: `http://localhost:8080/<context-path>`
+1. Open the project in NetBeans (8.x/12.x)
+2. Add a GlassFish server in NetBeans (Tools → Servers → Add Server)
+3. Set GlassFish as the project server (Project → Properties → Run)
+4. Configure JDBC if using SQL Server
+   - Copy `lib/mssql-jdbc-12.2.0.jre8.jar` to `GLASSFISH_HOME\glassfish\domains\domain1\lib`
+   - Or ensure properties in `web/WEB-INF/jdbc.properties` are correct
+5. Run the project (F6) and visit: `http://localhost:8080/<context-path>`
 
-## Chạy bằng Docker
+## Run with Docker
 
-Có sẵn nhiều `Dockerfile` (Tomcat, GlassFish, optimized...). Ví dụ với Tomcat:
+Example using Tomcat Dockerfile:
 
 ```powershell
-# Build image (ví dụ dùng Dockerfile.tomcat)
 docker build -t nestmart:tomcat -f Dockerfile.tomcat .
-
-# Chạy container
 docker run --rm -p 8080:8080 --name nestmart-web nestmart:tomcat
 ```
 
-Hoặc dùng Docker Compose:
+Using Docker Compose:
 
 ```powershell
 docker compose up -d
 ```
 
-Kiểm tra `docker-compose.yml` để tùy chỉnh cổng, biến môi trường, volume.
+Review `docker-compose.yml` to adjust ports, env vars, and volumes.
 
-<!-- Mục Triển khai được lược bỏ vì không còn dùng các nền tảng cụ thể. -->
+## Common Tasks
 
-## Tác vụ thường dùng
-
-- Làm sạch và build WAR: `ant clean war`
+- Clean and build WAR: `ant clean war`
 - Build Docker image: `docker build -t app -f Dockerfile.tomcat .`
-- Chạy bằng Compose: `docker compose up -d`
-- Dọn dẹp build: `./cleanup.ps1`
+- Start via Compose: `docker compose up -d`
+- Cleanup build artifacts: `./cleanup.ps1`
 
-## Gỡ lỗi
+## Troubleshooting
 
-- Lỗi kết nối DB: kiểm tra `jdbc.properties` và driver JDBC trong `lib/`.
-- 404/500 khi truy cập: xem log server (Tomcat/GlassFish) và cấu hình `dispatcher-servlet.xml`.
-- Lỗi build/Ant: đảm bảo JDK 8 và Ant đã có trong PATH.
-- Lỗi Docker: kiểm tra biến môi trường truyền vào image/container, cổng trùng lặp, quyền truy cập file.
+- DB connection issues: verify `jdbc.properties` and JDBC driver in `lib/`
+- 404/500 at runtime: check server logs and `dispatcher-servlet.xml` mapping
+- Ant build errors: ensure JDK 8 and Ant are on PATH
+- Docker errors: check env vars, port collisions, file permissions
 
-## Bản quyền
+## License
 
-Mã nguồn thuộc về tác giả dự án. Vui lòng xem giấy phép (nếu có) hoặc liên hệ chủ sở hữu trước khi sử dụng thương mại.
-
+Source code belongs to the project author. Refer to the license (if any) or contact the owner for commercial use.
 
