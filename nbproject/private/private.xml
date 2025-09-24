@@ -3,12 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/employee/order.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/admin/offersCreate.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/employee/order.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/admin/offersCreate.jsp</file>
             <file>file:/C:/Projects/trieuquocchau/web/jsp/admin/productUpdate.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/controllers/LoginController.java</file>
-            <file>file:/C:/Projects/trieuquocchau/web/WEB-INF/jdbc.properties</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/services/TokenService.java</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/controllers/LoginController.java</file>
+            <file>file:/C:/Projects/nestmart/web/WEB-INF/jdbc.properties</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/services/TokenService.java</file>
             <file>file:/C:/Projects/trieuquocchau/web/jsp/login.jsp</file>
             <file>file:/C:/Projects/trieuquocchau/src/java/com/controllers/ChangeInforController.java</file>
             <file>file:/C:/Projects/trieuquocchau/web/jsp/admin/category.jsp</file>
