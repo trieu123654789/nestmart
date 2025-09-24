@@ -5,58 +5,58 @@
         <group>
             <file>file:/C:/Projects/nestmart/web/jsp/employee/order.jsp</file>
             <file>file:/C:/Projects/nestmart/web/jsp/admin/offersCreate.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/admin/productUpdate.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/admin/productUpdate.jsp</file>
             <file>file:/C:/Projects/nestmart/src/java/com/controllers/LoginController.java</file>
             <file>file:/C:/Projects/nestmart/web/WEB-INF/jdbc.properties</file>
             <file>file:/C:/Projects/nestmart/src/java/com/services/TokenService.java</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/login.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/controllers/ChangeInforController.java</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/admin/category.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/admin/schedule.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/admin/brand.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/services/PasswordService.java</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/models/ShipperScheduleAndSalaryDAOImpl.java</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/client/orderHistory.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/admin/discountUpdate.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/models/AccountsDAOImpl.java</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/models/DiscountDAOImpl.java</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/client/clientboard.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/services/EmailService.java</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/controllers/PasswordResetController.java</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/client/cart.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/client/feedback.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/models/SalesReportDAOImpl.java</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/models/Accounts.java</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/controllers/PurchaseController.java</file>
-            <file>file:/C:/Projects/trieuquocchau/web/redirect.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/employee/viewOrder.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/admin/discount.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/controllers/AccountsController.java</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/services/SecurityService.java</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/resetPassword.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/WEB-INF/web.xml</file>
-            <file>file:/C:/Projects/trieuquocchau/web/WEB-INF/application.properties</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/admin/product.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/client/discount.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/models/OrdersDAOImpl.java</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/employee/assignShipper.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/client/livechat.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/controllers/SignUpController.java</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/controllers/ShippersController.java</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/models/Orders.java</file>
-            <file>file:/C:/Projects/trieuquocchau/src/java/com/services/UserService.java</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/client/feedbackView.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/shipper/printWeekPayroll.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/WEB-INF/dispatcher-servlet.xml</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/admin/accountInformation.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/client/discountinfo.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/client/productDetails.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/shipper/shippers.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/client/purchase.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/WEB-INF/applicationContext.xml</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/forgotPassword.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/admin/salary.jsp</file>
-            <file>file:/C:/Projects/trieuquocchau/web/jsp/client/product.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/login.jsp</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/controllers/ChangeInforController.java</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/admin/category.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/admin/schedule.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/admin/brand.jsp</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/services/PasswordService.java</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/models/ShipperScheduleAndSalaryDAOImpl.java</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/client/orderHistory.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/admin/discountUpdate.jsp</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/models/AccountsDAOImpl.java</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/models/DiscountDAOImpl.java</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/client/clientboard.jsp</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/services/EmailService.java</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/controllers/PasswordResetController.java</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/client/cart.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/client/feedback.jsp</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/models/SalesReportDAOImpl.java</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/models/Accounts.java</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/controllers/PurchaseController.java</file>
+            <file>file:/C:/Projects/nestmart/web/redirect.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/employee/viewOrder.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/admin/discount.jsp</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/controllers/AccountsController.java</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/services/SecurityService.java</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/resetPassword.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/WEB-INF/web.xml</file>
+            <file>file:/C:/Projects/nestmart/web/WEB-INF/application.properties</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/admin/product.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/client/discount.jsp</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/models/OrdersDAOImpl.java</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/employee/assignShipper.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/client/livechat.jsp</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/controllers/SignUpController.java</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/controllers/ShippersController.java</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/models/Orders.java</file>
+            <file>file:/C:/Projects/nestmart/src/java/com/services/UserService.java</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/client/feedbackView.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/shipper/printWeekPayroll.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/WEB-INF/dispatcher-servlet.xml</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/admin/accountInformation.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/client/discountinfo.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/client/productDetails.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/shipper/shippers.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/client/purchase.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/WEB-INF/applicationContext.xml</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/forgotPassword.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/admin/salary.jsp</file>
+            <file>file:/C:/Projects/nestmart/web/jsp/client/product.jsp</file>
         </group>
     </open-files>
 </project-private>
