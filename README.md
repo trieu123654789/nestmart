@@ -163,6 +163,16 @@ Review `docker-compose.yml` to adjust ports, env vars, and volumes.
 - 404/500 at runtime: check server logs and `dispatcher-servlet.xml` mapping
 - Ant build errors: ensure JDK 8 and Ant are on PATH
 - Docker errors: check env vars, port collisions, file permissions
+## 👤 Test Accounts
+
+Use the following test accounts to log in and explore the system:
+
+- **Nguyen Hoang Viet** – Role: **Admin** – Password: `1q2w3e`
+- **Ngoc Linh** – Role: **Customer** – Password: `1q2w3e`
+- **Nguyen My Binh** – Role: **Employee** – Password: `1q2w3e`
+- **Ho Van Kiet** – Role: **Shipper** – Password: `1q2w3e`
+
+> All passwords are stored as BCrypt hashes in the database.
 
 ## License
 
