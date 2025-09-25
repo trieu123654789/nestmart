@@ -15,16 +15,29 @@ RUN wget -O /tmp/javax.servlet-api-3.1.0.jar \
       https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar && \
     wget -O /tmp/javax.mail-api-1.6.2.jar \
       https://repo1.maven.org/maven2/com/sun/mail/javax.mail/1.6.2/javax.mail-1.6.2.jar && \
+    wget -O /tmp/validation-api-2.0.1.Final.jar \
+      https://repo1.maven.org/maven2/javax/validation/validation-api/2.0.1.Final/validation-api-2.0.1.Final.jar && \
+    wget -O /tmp/hibernate-validator-6.0.13.Final.jar \
+      https://repo1.maven.org/maven2/org/hibernate/validator/hibernate-validator/6.0.13.Final/hibernate-validator-6.0.13.Final.jar && \
+    wget -O /tmp/jboss-logging-3.3.2.Final.jar \
+      https://repo1.maven.org/maven2/org/jboss/logging/jboss-logging/3.3.2.Final/jboss-logging-3.3.2.Final.jar && \
+    wget -O /tmp/classmate-1.3.4.jar \
+      https://repo1.maven.org/maven2/com/fasterxml/classmate/1.3.4/classmate-1.3.4.jar && \
     mkdir -p build/classes build/webapp/WEB-INF/{classes,lib} dist && \
     /bin/bash -lc 'set -e; \
       CLASSPATH=$(find lib -type f -name "*.jar" -printf "%p:"); \
-      CLASSPATH="$CLASSPATH/tmp/javax.servlet-api-3.1.0.jar:/tmp/javax.mail-api-1.6.2.jar"; \
+      CLASSPATH="$CLASSPATH/tmp/javax.servlet-api-3.1.0.jar:/tmp/javax.mail-api-1.6.2.jar:/tmp/validation-api-2.0.1.Final.jar:/tmp/hibernate-validator-6.0.13.Final.jar:/tmp/jboss-logging-3.3.2.Final.jar:/tmp/classmate-1.3.4.jar"; \
       find src/java -name "*.java" > sources.txt; \
       if [ -s sources.txt ]; then \
         javac -encoding UTF-8 -source 1.8 -target 1.8 -cp "$CLASSPATH" -d build/classes @sources.txt; \
       fi; \
       cp -a web/. build/webapp/; \
+      mkdir -p build/webapp/WEB-INF/lib; \
       find lib -type f -name "*.jar" -exec cp {} build/webapp/WEB-INF/lib/ \; 2>/dev/null || true; \
+      cp /tmp/validation-api-2.0.1.Final.jar build/webapp/WEB-INF/lib/; \
+      cp /tmp/hibernate-validator-6.0.13.Final.jar build/webapp/WEB-INF/lib/; \
+      cp /tmp/jboss-logging-3.3.2.Final.jar build/webapp/WEB-INF/lib/; \
+      cp /tmp/classmate-1.3.4.jar build/webapp/WEB-INF/lib/; \
       cp -a build/classes/. build/webapp/WEB-INF/classes/ 2>/dev/null || true; \
       jar -cvf dist/nestmartappFinal.war -C build/webapp .'
 
@@ -58,6 +71,14 @@ RUN mkdir -p /app
 COPY web/WEB-INF/application.properties /app/application.properties
 COPY web/WEB-INF/jdbc.properties /app/jdbc.properties
 
+# Create a script to substitute environment variables in properties files
+RUN echo '#!/bin/bash' > /substitute-env.sh && \
+    echo 'set -e' >> /substitute-env.sh && \
+    echo 'if [ -f "/app/jdbc.properties" ]; then' >> /substitute-env.sh && \
+    echo '  sed "s/\${DB_HOST:-localhost}/$DB_HOST/g; s/\${DB_PORT:-1433}/$DB_PORT/g; s/\${DB_NAME:-nestmart}/$DB_NAME/g" /app/jdbc.properties > /usr/local/tomcat/webapps/nestmart/WEB-INF/jdbc.properties' >> /substitute-env.sh && \
+    echo 'fi' >> /substitute-env.sh && \
+    chmod +x /substitute-env.sh
+
 # Create uploads directories (will be created after WAR extraction)
 RUN mkdir -p /tmp/upload-setup
 
@@ -85,6 +106,7 @@ RUN echo '#!/bin/bash' > /startup.sh && \
     echo '  chmod -R 777 assets/admin/images/uploads/' >> /startup.sh && \
     echo '  cd ..' >> /startup.sh && \
     echo 'fi' >> /startup.sh && \
+    echo '/substitute-env.sh' >> /startup.sh && \
     echo 'exec catalina.sh run' >> /startup.sh && \
     chmod +x /startup.sh
 

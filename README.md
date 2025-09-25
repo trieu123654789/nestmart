@@ -16,7 +16,7 @@ Java web application built with Spring MVC (JSP/JSTL), packaged as a WAR. The pr
 ## Key Features
 
 - CRUD for products, categories, users, and orders (search, pagination, validation)
-- Role‑based portals (admin, employee, shipper, client) with Spring Security
+- Role-based portals (admin, employee, shipper, client) with Spring Security
 - Shopping flow: cart, checkout, order processing/history, product image upload
 - Excel import/export (Apache POI), file uploads (Commons FileUpload)
 - Customer live chat widget (polling, unread counter, session check)
@@ -103,6 +103,53 @@ docker compose up -d
 
 Review `docker-compose.yml` to adjust ports, env vars, and volumes.
 
+---
+
+## 🚀 Usage Guide
+
+### Step 1: Start the Database
+```powershell
+.\setup-database.ps1
+```
+
+### Step 2: Run the Project in NetBeans
+- Open NetBeans IDE
+- Load the NestMart project
+- Run the project (press **F6**)
+
+### Step 3: Access the Application
+- Open your browser
+- Go to: `http://localhost:8080/nestmart/`
+
+### Database Connection Info
+- **Server**: localhost:1433  
+- **Database**: nestmart  
+- **Username**: sa  
+- **Password**: sqladmin123!  
+
+### Stop the Database
+```powershell
+.\stop-database.ps1
+```
+
+### ⚠️ Notes
+- Make sure **Docker Desktop** is running
+- Ensure port **1433** is free (not used by another app)
+- If errors occur, rerun `setup-database.ps1`
+
+### 🔧 Troubleshooting
+- **Port already in use**
+  ```powershell
+  docker-compose -f docker-compose.dev.yml down
+  .\setup-database.ps1
+  ```
+- **Database connection failed**
+  - Verify Docker Desktop is running
+  - Rerun `setup-database.ps1`
+  - Wait ~30 seconds after starting the script
+
+---
+
 ## Common Tasks
 
 - Clean and build WAR: `ant clean war`
@@ -120,4 +167,3 @@ Review `docker-compose.yml` to adjust ports, env vars, and volumes.
 ## License
 
 Source code belongs to the project author. Refer to the license (if any) or contact the owner for commercial use.
-

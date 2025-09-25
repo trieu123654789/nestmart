@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  # SQL Server Database for NetBeans Development
+  sqlserver-dev:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: nestmart-sqlserver-dev
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: "sqladmin123!"
+      MSSQL_PID: Express
+      MSSQL_AGENT_ENABLED: "true"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_dev_data:/var/opt/mssql
+      - ./init-sqlserver.sql:/docker-entrypoint-initdb.d/init-sqlserver.sql
+      - ./nestmart.sql:/docker-entrypoint-initdb.d/nestmart.sql
+    restart: unless-stopped
+
+volumes:
+  sqlserver_dev_data:
