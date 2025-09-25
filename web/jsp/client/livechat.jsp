@@ -279,19 +279,17 @@
             /* Responsive improvements */
             @media (max-width: 480px) {
                 .chat-box {
-                    width: calc(100vw - 40px);
-                    height: calc(100vh - 140px);
+                    width: 280px;
+                    height: 350px;
                     right: 20px;
                     bottom: 80px;
                 }
-
                 .chat-widget {
-                    right: 50%;
-                    transform: translateX(50%);
+                    right: 20px;
                 }
 
                 .chat-widget:hover {
-                    transform: translateX(50%) translateY(-2px);
+                    transform: translateY(-2px);
                 }
             }
             /* Thay thế CSS cũ bằng CSS này */
@@ -742,7 +740,7 @@
             }
 
             function redirectToLogin() {
-                window.location.href = '../login.htm'; 
+                window.location.href = '../login.htm';
             }
 
             function updateUnreadMessageCount() {

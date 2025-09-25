@@ -1045,7 +1045,7 @@
 
                 function pollForNewCustomers() {
                     $.ajax({
-                        url: '/nestmart/employee/getUpdatedCustomerList.htm',
+                        url: '../employee/getUpdatedCustomerList.htm',
                         type: 'GET',
                         dataType: 'xml',
                         success: function (xml) {

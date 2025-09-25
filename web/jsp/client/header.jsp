@@ -148,11 +148,121 @@
     .dropdown {
         position: relative;
     }
+@media (max-width: 767px) {
+    .header-top.hidden-xs {
+        display: block !important;
+    }
+    
+    .header-top .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 6px;
+        
+    }
+    
+    .header-top .top-bar.left,
+    .header-top .top-bar.right {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .header-top .horizontal-menu {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+    }
+    
+    .header-top .horizontal-menu li {
+        margin: 0;
+    }
+    
+    /* Ẩn slogan */
+    .header-top .horizontal-menu li:nth-child(2) {
+        display: none !important;
+    }
+    
+    .header-top .horizontal-menu a {
+        font-size: 5px;
+        padding: 1px 2px;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+    
+    .header-top .horizontal-menu i {
+        margin-right: 6px;
+    }
+    
+    /* Điều chỉnh popup để căn giữa */
+    .popup-content {
+        left: 20% !important;
+        right: auto !important;
+        transform: translateX(-50%);
+    }
+}
+@media (max-width: 390px) {
+    .header-top.hidden-xs {
+        display: block !important;
+    }
+    
+    .header-top .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 6px;
+        
+    }
+    
+    .header-top .top-bar.left,
+    .header-top .top-bar.right {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .header-top .horizontal-menu {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+    }
+    
+    .header-top .horizontal-menu li {
+        margin: 0;
+    }
+    
+    /* Ẩn slogan */
+    .header-top .horizontal-menu li:nth-child(2) {
+        display: none !important;
+    }
+    
+    .header-top .horizontal-menu a {
+        font-size: 5px;
+        padding: 1px 2px;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+    
+    .header-top .horizontal-menu i {
+        margin-right: 6px;
+    }
+    
+    /* Điều chỉnh popup để căn giữa */
+    .popup-content {
+        left: 20% !important;
+        right: auto !important;
+        transform: translateX(-50%);
+    }
+}
 
 </style>
 
 <header id="header" class="header-area style-01 layout-03">
-    <div class="header-top bg-main hidden-xs">
+<div class="header-top bg-main">
         <div class="container">
             <!-- Left top bar -->
             <div class="top-bar left">
