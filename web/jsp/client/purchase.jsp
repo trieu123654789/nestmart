@@ -31,7 +31,6 @@
                 max-width: 1700px;
                 margin: auto;
             }
-
             .order-left, .order-right {
                 background-color: #fff;
                 padding: 30px 25px;
@@ -390,7 +389,6 @@
                                         </div>
                                     </div>
 
-
                                 </div>
 
                                 <div class="order-right">
@@ -420,19 +418,19 @@
                                                                 <c:when test="${voucher.discountType == 'Percentage'}">
                                                                     Get ${voucher.discountValue}% off
                                                                     <c:if test="${voucher.maxDiscount != null}">
-                                                                        (max $<fmt:formatNumber value="${voucher.maxDiscount}" type="number" maxFractionDigits="0" groupingUsed="true" />)
+                                                                        (max <fmt:formatNumber value="${voucher.maxDiscount}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$)
                                                                     </c:if>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    Get $<fmt:formatNumber value="${voucher.discountValue}" type="number" maxFractionDigits="0" groupingUsed="true" /> off
+                                                                    Get <fmt:formatNumber value="${voucher.discountValue}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$ off
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </div>
                                                         <c:if test="${voucher.minOrderValue != null}">
-                                                            <div class="voucher-desc">Min order: $<fmt:formatNumber value="${voucher.minOrderValue}" type="number" maxFractionDigits="0" groupingUsed="true" /></div>
+                                                            <div class="voucher-desc">Min order: <fmt:formatNumber value="${voucher.minOrderValue}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$</div>
                                                         </c:if>
                                                         <div class="voucher-discount">
-                                                            Saves: $<fmt:formatNumber value="${voucher.calculateDiscount(grandTotal)}" type="number" maxFractionDigits="2" groupingUsed="true" />
+                                                            Saves: <fmt:formatNumber value="${voucher.calculateDiscount(grandTotal)}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                                         </div>
                                                     </div>
                                                 </c:forEach>
@@ -444,11 +442,11 @@
                                                                 <c:when test="${voucher.discountType == 'Percentage'}">
                                                                     Get ${voucher.discountValue}% off
                                                                     <c:if test="${voucher.maxDiscount != null}">
-                                                                        (max $<fmt:formatNumber value="${voucher.maxDiscount}" type="number" maxFractionDigits="0" groupingUsed="true" />)
+                                                                        (max <fmt:formatNumber value="${voucher.maxDiscount}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$)
                                                                     </c:if>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    Get $<fmt:formatNumber value="${voucher.discountValue}" type="number" maxFractionDigits="0" groupingUsed="true" /> off
+                                                                    Get <fmt:formatNumber value="${voucher.discountValue}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$ off
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </div>
@@ -493,12 +491,12 @@
                                                                          alt="${item.productName}" class="cart-image">
                                                                 </td>
                                                                 <td data-label="Name">${item.productName}</td>
-                                                                <td data-label="Price">
-                                                                    <fmt:formatNumber value="${item.productPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                <td data-label="Price" class="unit-price" data-price="${item.productPrice}">
+                                                                    <fmt:formatNumber value="${item.productPrice}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                                                 </td>
                                                                 <td data-label="Quantity">${item.quantity}</td>
-                                                                <td data-label="Total">
-                                                                    <fmt:formatNumber value="${item.productPrice * item.quantity}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                <td data-label="Total" class="item-total">
+                                                                    <fmt:formatNumber value="${item.productPrice * item.quantity}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                                                 </td>
                                                             </tr>
                                                         </c:forEach>
@@ -512,27 +510,27 @@
                                                                     <c:set var="item" value="${entry.value}" />
                                                                     <c:set var="subtotal" value="${subtotal + (item.productPrice * item.quantity)}" scope="page"/>
                                                                 </c:forEach>
-                                                                <span id="cart-subtotal"><fmt:formatNumber value="${subtotal}" type="number" maxFractionDigits="0" groupingUsed="true" />$</span>
+                                                                <span id="cart-subtotal"><fmt:formatNumber value="${subtotal}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$</span>
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td colspan="4">Shipping Fee</td>
                                                             <td>
-                                                                <span id="shipping-fee">5$</span>
-                                                                <input type="hidden" name="shippingFee" value="5" />
+                                                                <span id="shipping-fee">5.00$</span>
+                                                                <input type="hidden" name="shippingFee" value="5.00" />
                                                             </td>
                                                         </tr>
                                                         <tr id="discountRow" style="display: none;" class="discount-row">
                                                             <td colspan="4">Voucher Discount</td>
                                                             <td>
-                                                                -<span id="discount-amount">0$</span>
+                                                                -<span id="discount-amount">0.00$</span>
                                                             </td>
                                                         </tr>
                                                         <tr class="summary-row total-row">
                                                             <td colspan="4"><strong>Total</strong></td>
                                                             <td>
                                                                 <c:set var="grandTotal" value="${subtotal + 5}" scope="page"/>
-                                                                <span id="cart-total"><strong><fmt:formatNumber value="${grandTotal}" type="number" maxFractionDigits="0" groupingUsed="true" />$</strong></span>
+                                                                <span id="cart-total"><strong><fmt:formatNumber value="${grandTotal}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$</strong></span>
                                                             </td>
                                                         </tr>
                                                     </tfoot>
@@ -576,270 +574,304 @@
 
     </body>
     <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        function updateCartTotal() {
-                            let subtotal = 0;
-                            const shippingFee = 5;
-                            const rows = document.querySelectorAll('tbody tr');
+        // Fix decimal precision issues
+        function roundToTwoDecimals(num) {
+            return Math.round((num + Number.EPSILON) * 100) / 100;
+        }
+        
+        function formatCurrency(amount) {
+            const rounded = roundToTwoDecimals(amount);
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(rounded) + '$';
+        }
 
-                            rows.forEach(function (row) {
-                                const price = parseFloat(row.querySelector('.unit-price').getAttribute('data-price'));
-                                const quantity = parseInt(row.querySelector('input[name="quantity"]').value);
-                                const itemTotal = price * quantity;
-                                row.querySelector('.item-total').textContent = '$' + itemTotal.toFixed(2);
-                                subtotal += itemTotal;
-                            });
+        document.addEventListener('DOMContentLoaded', function () {
+            function updateCartTotal() {
+                let subtotal = 0;
+                const shippingFee = 5.00; // Fixed to 2 decimal places
+                const rows = document.querySelectorAll('tbody tr');
 
-                            const total = subtotal + shippingFee;
-
-                            document.getElementById('cart-subtotal').textContent = subtotal.toFixed(2);
-                            document.getElementById('cart-total').innerHTML = '<strong>$' + total.toFixed(2) + '</strong>';
-                            document.getElementById('totalAmountInput').value = total.toFixed(2);
+                rows.forEach(function (row) {
+                    const priceElement = row.querySelector('.unit-price');
+                    const quantityElement = row.querySelector('td[data-label="Quantity"]');
+                    
+                    if (priceElement && quantityElement) {
+                        const price = roundToTwoDecimals(parseFloat(priceElement.getAttribute('data-price')) || 0);
+                        const quantity = parseInt(quantityElement.textContent.trim()) || 0;
+                        const itemTotal = roundToTwoDecimals(price * quantity);
+                        
+                        // Update item total display
+                        const itemTotalElement = row.querySelector('.item-total');
+                        if (itemTotalElement) {
+                            itemTotalElement.textContent = formatCurrency(itemTotal);
                         }
-
-                        if (document.querySelectorAll('.quantity-input').length > 0) {
-                            updateCartTotal();
-
-                            document.querySelectorAll('.quantity-input').forEach(function (input) {
-                                input.addEventListener('change', updateCartTotal);
-                            });
-                        }
-                    });
-
-                    const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
-                    const bankInfo = document.getElementById('bank-info');
-
-                    paymentRadios.forEach(radio => {
-                        radio.addEventListener('change', function () {
-                            if (this.value === 'Bank transfer') {
-                                bankInfo.style.display = 'block';
-                            } else {
-                                bankInfo.style.display = 'none';
-                            }
-                        });
-                    });
-
-                    let appliedVoucherData = null;
-
-                    function getContextPath() {
-                        return window.location.pathname.substring(0, window.location.pathname.indexOf("/", 2));
+                        
+                        subtotal += itemTotal;
                     }
+                });
 
-                    function applyVoucherByCode() {
-                        const voucherInput = document.getElementById('voucherCodeInput');
-                        const code = voucherInput.value.trim();
+                subtotal = roundToTwoDecimals(subtotal);
+                const total = roundToTwoDecimals(subtotal + shippingFee);
 
-                        if (!code) {
-                            alert('Please enter a voucher code');
-                            return;
-                        }
+                // Update subtotal display
+                const subtotalElement = document.getElementById('cart-subtotal');
+                if (subtotalElement) {
+                    subtotalElement.textContent = formatCurrency(subtotal);
+                }
 
-                        applyVoucherRequest(code);
-                    }
+                // Update total display
+                const totalElement = document.getElementById('cart-total');
+                if (totalElement) {
+                    totalElement.innerHTML = '<strong>' + formatCurrency(total) + '</strong>';
+                }
 
-                    function applyVoucher(code) {
-                        document.querySelectorAll('.voucher-item.applied').forEach(item => {
-                            item.classList.remove('applied');
-                            if (item.classList.contains('available')) {
+                // Update hidden input
+                const totalAmountInput = document.getElementById('totalAmountInput');
+                if (totalAmountInput) {
+                    totalAmountInput.value = total.toFixed(2);
+                }
+            }
+
+            // Initialize cart totals
+            if (document.querySelectorAll('.cart-table tbody tr').length > 0) {
+                updateCartTotal();
+            }
+        });
+
+        const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+        const bankInfo = document.getElementById('bank-info');
+
+        paymentRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (this.value === 'Bank transfer') {
+                    bankInfo.style.display = 'block';
+                } else {
+                    bankInfo.style.display = 'none';
+                }
+            });
+        });
+
+        let appliedVoucherData = null;
+
+        function getContextPath() {
+            return window.location.pathname.substring(0, window.location.pathname.indexOf("/", 2));
+        }
+
+        function applyVoucherByCode() {
+            const voucherInput = document.getElementById('voucherCodeInput');
+            const code = voucherInput.value.trim();
+
+            if (!code) {
+                alert('Please enter a voucher code');
+                return;
+            }
+
+            applyVoucherRequest(code);
+        }
+
+        function applyVoucher(code) {
+            document.querySelectorAll('.voucher-item.applied').forEach(item => {
+                item.classList.remove('applied');
+                if (item.classList.contains('available')) {
+                    const voucherCode = item.querySelector('.voucher-code').textContent;
+                    item.onclick = function () {
+                        applyVoucher(voucherCode);
+                    };
+                }
+            });
+
+            applyVoucherRequest(code);
+        }
+
+        function parseXMLResponse(xmlString) {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+
+            const response = {};
+            response.success = xmlDoc.querySelector('success').textContent === 'true';
+
+            const message = xmlDoc.querySelector('message');
+            if (message) {
+                response.message = message.textContent;
+            }
+
+            if (response.success) {
+                const voucherCode = xmlDoc.querySelector('voucherCode');
+                const discountAmount = xmlDoc.querySelector('discountAmount');
+                const newTotal = xmlDoc.querySelector('newTotal');
+                const discountType = xmlDoc.querySelector('discountType');
+                const discountValue = xmlDoc.querySelector('discountValue');
+
+                if (voucherCode)
+                    response.voucherCode = voucherCode.textContent;
+                if (discountAmount)
+                    response.discountAmount = discountAmount.textContent;
+                if (newTotal)
+                    response.newTotal = newTotal.textContent;
+                if (discountType)
+                    response.discountType = discountType.textContent;
+                if (discountValue)
+                    response.discountValue = discountValue.textContent;
+            }
+
+            return response;
+        }
+
+        function applyVoucherRequest(code) {
+            const applyBtn = document.querySelector('.voucher-apply-btn');
+            const originalText = applyBtn.textContent;
+            applyBtn.textContent = 'Applying...';
+            applyBtn.disabled = true;
+
+            fetch(getContextPath() + '/client/applyVoucher.htm', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'voucherCode=' + encodeURIComponent(code)
+            })
+                    .then(response => response.text())
+                    .then(xmlString => {
+                        const data = parseXMLResponse(xmlString);
+
+                        if (data.success) {
+                            appliedVoucherData = data;
+                            showAppliedVoucher(data);
+                            updateOrderTotal(data.discountAmount, data.newTotal);
+
+                            document.getElementById('voucherCodeInput').value = '';
+
+                            const voucherItems = document.querySelectorAll('.voucher-item.available');
+                            voucherItems.forEach(item => {
                                 const voucherCode = item.querySelector('.voucher-code').textContent;
-                                item.onclick = function () {
-                                    applyVoucher(voucherCode);
-                                };
-                            }
-                        });
+                                if (voucherCode === code) {
+                                    item.classList.add('applied');
+                                    item.onclick = null;
+                                }
+                            });
 
-                        applyVoucherRequest(code);
-                    }
-
-                    function parseXMLResponse(xmlString) {
-                        const parser = new DOMParser();
-                        const xmlDoc = parser.parseFromString(xmlString, "application/xml");
-
-                        const response = {};
-                        response.success = xmlDoc.querySelector('success').textContent === 'true';
-
-                        const message = xmlDoc.querySelector('message');
-                        if (message) {
-                            response.message = message.textContent;
-                        }
-
-                        if (response.success) {
-                            const voucherCode = xmlDoc.querySelector('voucherCode');
-                            const discountAmount = xmlDoc.querySelector('discountAmount');
-                            const newTotal = xmlDoc.querySelector('newTotal');
-                            const discountType = xmlDoc.querySelector('discountType');
-                            const discountValue = xmlDoc.querySelector('discountValue');
-
-                            if (voucherCode)
-                                response.voucherCode = voucherCode.textContent;
-                            if (discountAmount)
-                                response.discountAmount = discountAmount.textContent;
-                            if (newTotal)
-                                response.newTotal = newTotal.textContent;
-                            if (discountType)
-                                response.discountType = discountType.textContent;
-                            if (discountValue)
-                                response.discountValue = discountValue.textContent;
-                        }
-
-                        return response;
-                    }
-
-                    function applyVoucherRequest(code) {
-                        const applyBtn = document.querySelector('.voucher-apply-btn');
-                        const originalText = applyBtn.textContent;
-                        applyBtn.textContent = 'Applying...';
-                        applyBtn.disabled = true;
-
-                        fetch(getContextPath() + '/client/applyVoucher.htm', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            body: 'voucherCode=' + encodeURIComponent(code)
-                        })
-                                .then(response => response.text()) // Changed from response.json() to response.text()
-                                .then(xmlString => {
-                                    const data = parseXMLResponse(xmlString); // Parse XML response
-
-                                    if (data.success) {
-                                        appliedVoucherData = data;
-                                        showAppliedVoucher(data);
-                                        updateOrderTotal(data.discountAmount, data.newTotal);
-
-                                        document.getElementById('voucherCodeInput').value = '';
-
-                                        const voucherItems = document.querySelectorAll('.voucher-item.available');
-                                        voucherItems.forEach(item => {
-                                            const voucherCode = item.querySelector('.voucher-code').textContent;
-                                            if (voucherCode === code) {
-                                                item.classList.add('applied');
-                                                item.onclick = null; // Remove click handler
-                                            }
-                                        });
-
-                                    } else {
-                                        alert(data.message || 'Failed to apply voucher');
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                    alert('Error applying voucher. Please try again.');
-                                })
-                                .finally(() => {
-                                    applyBtn.textContent = originalText;
-                                    applyBtn.disabled = false;
-                                });
-                    }
-
-                    function showAppliedVoucher(data) {
-                        const appliedDisplay = document.getElementById('appliedVoucherDisplay');
-                        const appliedText = document.getElementById('appliedVoucherText');
-
-                        let discountText = '';
-                        if (data.discountType === 'Percentage') {
-                            discountText = data.discountValue + '% off';
                         } else {
-                            discountText = '$' + parseFloat(data.discountValue).toFixed(0) + ' off';
+                            alert(data.message || 'Failed to apply voucher');
                         }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error applying voucher. Please try again.');
+                    })
+                    .finally(() => {
+                        applyBtn.textContent = originalText;
+                        applyBtn.disabled = false;
+                    });
+        }
 
-                        appliedText.innerHTML =
-                                '<strong>' + data.voucherCode + '</strong> - ' + discountText +
-                                ' (Saved: $' + parseFloat(data.discountAmount).toFixed(2) + ')';
+        function showAppliedVoucher(data) {
+            const appliedDisplay = document.getElementById('appliedVoucherDisplay');
+            const appliedText = document.getElementById('appliedVoucherText');
 
-                        appliedDisplay.style.display = 'block';
+            let discountText = '';
+            if (data.discountType === 'Percentage') {
+                discountText = data.discountValue + '% off';
+            } else {
+                discountText = formatCurrency(parseFloat(data.discountValue)) + ' off';
+            }
 
-                        document.getElementById('appliedVoucherCode').value = data.voucherCode;
-                        document.getElementById('discountAmountInput').value = data.discountAmount;
-                    }
+            appliedText.innerHTML =
+                    '<strong>' + data.voucherCode + '</strong> - ' + discountText +
+                    ' (Saved: ' + formatCurrency(parseFloat(data.discountAmount)) + ')';
 
-                    function removeAppliedVoucher() {
-                        fetch(getContextPath() + '/client/removeVoucher.htm', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
+            appliedDisplay.style.display = 'block';
+
+            document.getElementById('appliedVoucherCode').value = data.voucherCode;
+            document.getElementById('discountAmountInput').value = parseFloat(data.discountAmount).toFixed(2);
+        }
+
+        function removeAppliedVoucher() {
+            fetch(getContextPath() + '/client/removeVoucher.htm', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+                    .then(response => response.text())
+                    .then(xmlString => {
+                        const data = parseXMLResponse(xmlString);
+
+                        if (data.success) {
+                            document.getElementById('appliedVoucherDisplay').style.display = 'none';
+
+                            const originalTotal = xmlString.match(/<originalTotal>(.*?)<\/originalTotal>/)?.[1];
+                            if (originalTotal) {
+                                resetOrderTotal(originalTotal);
                             }
-                        })
-                                .then(response => response.text())
-                                .then(xmlString => {
-                                    const data = parseXMLResponse(xmlString);
 
-                                    if (data.success) {
-                                        document.getElementById('appliedVoucherDisplay').style.display = 'none';
+                            appliedVoucherData = null;
 
-                                        const originalTotal = xmlString.match(/<originalTotal>(.*?)<\/originalTotal>/)?.[1];
-                                        if (originalTotal) {
-                                            resetOrderTotal(originalTotal);
-                                        }
+                            document.getElementById('appliedVoucherCode').value = '';
+                            document.getElementById('discountAmountInput').value = '0';
 
-                                        appliedVoucherData = null;
+                            document.querySelectorAll('.voucher-item.applied').forEach(item => {
+                                item.classList.remove('applied');
+                                if (item.classList.contains('available')) {
+                                    const code = item.querySelector('.voucher-code').textContent;
+                                    item.onclick = function () {
+                                        applyVoucher(code);
+                                    };
+                                }
+                            });
 
-                                        document.getElementById('appliedVoucherCode').value = '';
-                                        document.getElementById('discountAmountInput').value = '0';
+                            document.getElementById('discountRow').style.display = 'none';
 
-                                        document.querySelectorAll('.voucher-item.applied').forEach(item => {
-                                            item.classList.remove('applied');
-                                            if (item.classList.contains('available')) {
-                                                const code = item.querySelector('.voucher-code').textContent;
-                                                item.onclick = function () {
-                                                    applyVoucher(code);
-                                                };
-                                            }
-                                        });
-
-                                        document.getElementById('discountRow').style.display = 'none';
-
-                                    } else {
-                                        alert(data.message || 'Failed to remove voucher');
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                    alert('Error removing voucher. Please try again.');
-                                });
-                    }
-
-                    function updateOrderTotal(discountAmount, newTotal) {
-                        const discountRow = document.getElementById('discountRow');
-                        const discountAmountElement = document.getElementById('discount-amount');
-                        const cartTotalElement = document.getElementById('cart-total');
-                        const totalAmountInput = document.getElementById('totalAmountInput');
-
-                        if (discountRow) {
-                            discountRow.style.display = 'table-row';
-                            if (discountAmountElement) {
-                                discountAmountElement.textContent = parseFloat(discountAmount).toFixed(2) + '$';
-                            }
+                        } else {
+                            alert(data.message || 'Failed to remove voucher');
                         }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error removing voucher. Please try again.');
+                    });
+        }
 
-                        if (cartTotalElement) {
-                            cartTotalElement.innerHTML = '<strong>' + parseFloat(newTotal).toFixed(0) + '$</strong>';
-                        }
+        function updateOrderTotal(discountAmount, newTotal) {
+            const discountRow = document.getElementById('discountRow');
+            const discountAmountElement = document.getElementById('discount-amount');
+            const cartTotalElement = document.getElementById('cart-total');
+            const totalAmountInput = document.getElementById('totalAmountInput');
 
-                        if (totalAmountInput) {
-                            totalAmountInput.value = parseFloat(newTotal).toFixed(2);
-                        }
-                    }
+            const discountValue = roundToTwoDecimals(parseFloat(discountAmount));
+            const totalValue = roundToTwoDecimals(parseFloat(newTotal));
 
-                    function resetOrderTotal(originalTotal) {
-                        const cartTotalElement = document.getElementById('cart-total');
-                        const totalAmountInput = document.getElementById('totalAmountInput');
+            if (discountRow) {
+                discountRow.style.display = 'table-row';
+                if (discountAmountElement) {
+                    discountAmountElement.textContent = formatCurrency(discountValue);
+                }
+            }
 
-                        if (cartTotalElement) {
-                            cartTotalElement.innerHTML = '<strong>' + parseFloat(originalTotal).toFixed(0) + '$</strong>';
-                        }
+            if (cartTotalElement) {
+                cartTotalElement.innerHTML = '<strong>' + formatCurrency(totalValue) + '</strong>';
+            }
 
-                        if (totalAmountInput) {
-                            totalAmountInput.value = parseFloat(originalTotal).toFixed(2);
-                        }
-                    }
+            if (totalAmountInput) {
+                totalAmountInput.value = totalValue.toFixed(2);
+            }
+        }
 
-                    function formatCurrency(amount) {
-                        return parseFloat(amount).toLocaleString('en-US', {
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 2
-                        });
-                    }
-    </script>
+        function resetOrderTotal(originalTotal) {
+            const cartTotalElement = document.getElementById('cart-total');
+            const totalAmountInput = document.getElementById('totalAmountInput');
+
+            const totalValue = roundToTwoDecimals(parseFloat(originalTotal));
+
+            if (cartTotalElement) {
+                cartTotalElement.innerHTML = '<strong>' + formatCurrency(totalValue) + '</strong>';
+            }
+
+            if (totalAmountInput) {
+                totalAmountInput.value = totalValue.toFixed(2);
+            }
+        }
+             </script>
     <jsp:include page="livechat.jsp" />
 </html>

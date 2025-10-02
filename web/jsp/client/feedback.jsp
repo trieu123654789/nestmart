@@ -415,7 +415,7 @@
                                     <div class="row mb-4">
                                         <div class="col-md-4">
                                             <div class="product-container">
-                                                <img src="${pageContext.request.contextPath}/assets/client/images/uploads/products/${product.images[0].images}" alt="alt" class="product-image"/>
+                                                <img src="${pageContext.request.contextPath}/assets/admin/images/uploads/products/${product.images[0].images}" alt="alt" class="product-image"/>
                                                 <div class="product-name">
                                                     <span>${product.productName}</span>
                                                 </div>

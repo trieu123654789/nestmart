@@ -711,21 +711,22 @@
                                                     <c:when test="${product.discount > 0}">
                                                         <p>
                                                             <span class="original-price">
-                                                                <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                <fmt:formatNumber value="${product.unitPrice}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                                             </span>
                                                             <span class="discounted-price">
-                                                                <fmt:formatNumber value="${product.discount}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                <fmt:formatNumber value="${product.discount}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                                             </span>
                                                             <input type="hidden" name="productPrice" value="${product.discount}">
                                                         </p>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <p class="product-price">
-                                                            <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                            <fmt:formatNumber value="${product.unitPrice}" type="number" minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                                         </p>
                                                         <input type="hidden" name="productPrice" value="${product.unitPrice}">
                                                     </c:otherwise>
                                                 </c:choose>
+
 
                                             </div>
 
@@ -1000,7 +1001,6 @@
                                                                         <img src="../assets/admin/images/uploads/products/${image.images}" 
                                                                              alt="${product.productName}" width="250" height="250" class="product-thumbnail1"/>
                                                                     </a>
-
                                                                 </div>
                                                             </c:if>
                                                         </c:forEach>
@@ -1020,20 +1020,31 @@
                                                             <c:when test="${product.discount > 0}">
                                                                 <p>
                                                                     <span class="original-price1">
-                                                                        <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                        <fmt:formatNumber value="${product.unitPrice}" 
+                                                                                          type="number" 
+                                                                                          minFractionDigits="2" 
+                                                                                          maxFractionDigits="2" 
+                                                                                          groupingUsed="true" />$
                                                                     </span>
                                                                     <span class="discounted-price1">
-                                                                        <fmt:formatNumber value="${product.discount}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                        <fmt:formatNumber value="${product.discount}" 
+                                                                                          type="number" 
+                                                                                          minFractionDigits="2" 
+                                                                                          maxFractionDigits="2" 
+                                                                                          groupingUsed="true" />$
                                                                     </span>
                                                                 </p>
                                                             </c:when>
                                                             <c:otherwise>
                                                                 <p class="original-price2">
-                                                                    <fmt:formatNumber value="${product.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                    <fmt:formatNumber value="${product.unitPrice}" 
+                                                                                      type="number" 
+                                                                                      minFractionDigits="2" 
+                                                                                      maxFractionDigits="2" 
+                                                                                      groupingUsed="true" />$
                                                                 </p>
                                                             </c:otherwise>
                                                         </c:choose>
-                                                        <p>
 
                                                         <div style="display: flex;
                                                              align-items: center;
@@ -1058,16 +1069,13 @@
                                                                  margin: 0 10px;"></div>
                                                             <span class="badge bg-light">Sold: ${product.totalQuantitySold}</span>
                                                         </div>
-
-                                                        </p>
-
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
                                     </li>
                                 </c:forEach>
+
                             </ul>
                         </c:if>
 

@@ -225,6 +225,7 @@
                                     <c:when test="${order.orderStatus eq 'Denied'}">Return request denied</c:when>
                                 </c:choose>
                             </div>
+
                             <p><label>Order ID:</label> ${order.orderID}</p>
                             <p><label>Order Date:</label> ${order.formattedOrderDate}</p>
                             <c:if test="${not empty order.deliveryDate}">
@@ -248,82 +249,86 @@
                                         <p><label>Product:</label> ${detail.product.productName}</p>
                                         <p><label>Quantity:</label> ${detail.quantity}</p>
                                         <p><label>Unit Price:</label> 
-                                            <fmt:formatNumber value="${detail.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                            <fmt:formatNumber value="${detail.unitPrice}" type="number" 
+                                                              minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                         </p>
                                         <p><label>Total:</label>
-                                            <fmt:formatNumber value="${detail.totalPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                            <fmt:formatNumber value="${detail.totalPrice}" type="number" 
+                                                              minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                         </p>
                                     </div>
                                 </div>
                             </c:forEach>
-<div style="border-top: 1px solid #ddd; padding-top: 15px; margin-top: 20px;">
-    <!-- Subtotal -->
-    <p style="font-size: 16px; margin: 8px 0;">
-        <label>Subtotal:</label> 
-        <c:set var="subtotal" value="0" />
-        <c:forEach var="detail" items="${order.orderDetails}">
-            <c:set var="subtotal" value="${subtotal + detail.totalPrice}" />
-        </c:forEach>
-        <fmt:formatNumber value="${subtotal}" type="number" maxFractionDigits="0" groupingUsed="true" />$
-    </p>
-    
-    <p style="font-size: 16px; margin: 8px 0;">
-        <label>Shipping Fee:</label> 5$
-    </p>
-  <c:if test="${not empty usedVoucher}">
-    <c:set var="totalBeforeDiscount" value="${subtotal + 5}" />
-    
-    <c:choose>
-        <c:when test="${usedVoucher.DiscountType eq 'Percentage'}">
-            <!-- Tính discount theo phần trăm -->
-            <c:set var="calculatedDiscount" value="${subtotal * usedVoucher.DiscountValue / 100}" />
-            
-            <!-- Kiểm tra MaxDiscount, nếu có và nhỏ hơn thì lấy MaxDiscount -->
-            <c:choose>
-                <c:when test="${not empty usedVoucher.MaxDiscount and usedVoucher.MaxDiscount < calculatedDiscount}">
-                    <c:set var="discountAmount" value="${usedVoucher.MaxDiscount}" />
-                </c:when>
-                <c:otherwise>
-                    <c:set var="discountAmount" value="${calculatedDiscount}" />
-                </c:otherwise>
-            </c:choose>
-        </c:when>
-        
-        <c:when test="${usedVoucher.DiscountType eq 'FixedAmount'}">
-            <c:choose>
-                <c:when test="${usedVoucher.DiscountValue > subtotal}">
-                    <c:set var="discountAmount" value="${subtotal}" />
-                </c:when>
-                <c:otherwise>
-                    <c:set var="discountAmount" value="${usedVoucher.DiscountValue}" />
-                </c:otherwise>
-            </c:choose>
-        </c:when>
-        
-        <c:otherwise>
-            <c:set var="discountAmount" value="0" />
-        </c:otherwise>
-    </c:choose>
 
-    <p style="font-size: 16px; margin: 8px 0; color: #28a745;">
-        <label>Voucher Discount:</label>
-    
-        
-       
-        
-        - <fmt:formatNumber value="${discountAmount}" type="number" 
-                            maxFractionDigits="0" groupingUsed="true" />$
-    </p>
-</c:if>
+                            <div style="border-top: 1px solid #ddd; padding-top: 15px; margin-top: 20px;">
+                                <!-- Subtotal -->
+                                <c:set var="subtotal" value="0" />
+                                <c:forEach var="detail" items="${order.orderDetails}">
+                                    <c:set var="subtotal" value="${subtotal + detail.totalPrice}" />
+                                </c:forEach>
+                                <p style="font-size: 16px; margin: 8px 0;">
+                                    <label>Subtotal:</label> 
+                                    <fmt:formatNumber value="${subtotal}" type="number" 
+                                                      minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
+                                </p>
 
+                                <p style="font-size: 16px; margin: 8px 0;">
+                                    <label>Shipping Fee:</label> 5,00$
+                                </p>
 
+                                <c:if test="${not empty usedVoucher}">
+                                    <c:set var="totalBeforeDiscount" value="${subtotal + 5}" />
 
-</div>
+                                    <c:choose>
+                                        <c:when test="${usedVoucher.DiscountType eq 'Percentage'}">
+                                            <c:set var="calculatedDiscount" value="${subtotal * usedVoucher.DiscountValue / 100}" />
+                                            <c:choose>
+                                                <c:when test="${not empty usedVoucher.MaxDiscount and usedVoucher.MaxDiscount < calculatedDiscount}">
+                                                    <c:set var="discountAmount" value="${usedVoucher.MaxDiscount}" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:set var="discountAmount" value="${calculatedDiscount}" />
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:when>
+                                        <c:when test="${usedVoucher.DiscountType eq 'FixedAmount'}">
+                                            <c:choose>
+                                                <c:when test="${usedVoucher.DiscountValue > subtotal}">
+                                                    <c:set var="discountAmount" value="${subtotal}" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:set var="discountAmount" value="${usedVoucher.DiscountValue}" />
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:set var="discountAmount" value="0" />
+                                        </c:otherwise>
+                                    </c:choose>
 
-<p style="font-size:18px; font-weight:600; margin-top:15px; border-top: 2px solid #333; padding-top: 10px;">
-    <label>Total Amount:</label> 
-    <fmt:formatNumber value="${order.totalAmount}" type="number" maxFractionDigits="0" groupingUsed="true" />$
-</p>
+                                    <p style="font-size: 16px; margin: 8px 0; color: #28a745;">
+                                        <label>Voucher Discount:</label>
+                                        - <fmt:formatNumber value="${discountAmount}" type="number" 
+                                                          minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
+                                    </p>
+                                </c:if>
+
+                                <p style="font-size:18px; font-weight:600; margin-top:15px; border-top: 2px solid #333; padding-top: 10px;">
+                                    <label>Total Amount:</label> 
+                                    <c:choose>
+                                        <c:when test="${not empty usedVoucher}">
+                                            <c:set var="finalTotal" value="${subtotal + 5 - discountAmount}" />
+                                            <fmt:formatNumber value="${finalTotal}" type="number" 
+                                                              minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
+                                        </c:when>
+                                        <c:otherwise>
+                                            <fmt:formatNumber value="${order.totalAmount}" type="number" 
+                                                              minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
+                                        </c:otherwise>
+                                    </c:choose>
+                                </p>
+                            </div>
+
                             <c:if test="${order.orderStatus eq 'Return Requested' 
                                           || order.orderStatus eq 'Approved' 
                                           || order.orderStatus eq 'Denied'}">
@@ -344,28 +349,27 @@
                                             <p><label>Message:</label> ${resp.message}</p>
                                         </div>
                                     </c:forEach>
-
                                 </div>
                             </c:if>
 
-
                             <button onclick="window.history.back();">OK</button>
+
                             <c:if test="${order.orderStatus eq 'Pending'}">
                                 <a href="javascript:void(0);" 
                                    onclick="confirmCancelOrder('${order.orderID}')"
                                    class="red-outline-btn">Cancel Order</a>
                             </c:if>
-                            <c:set var="today" value="<%= new java.util.Date()%>" />
 
+                            <c:set var="today" value="<%= new java.util.Date()%>" />
                             <c:if test="${order.orderStatus eq 'Completed' 
                                           and (today.time - order.deliveryDate.time) / (1000*60*60*24) <= 4}">
                                   <a href="${pageContext.request.contextPath}/client/returnorder.htm?orderId=${order.orderID}" 
                                      class="red-outline-btn">Return Order</a>
                             </c:if>
-
-
                         </div>
                     </c:if>
+
+
                     <form id="cancelOrderForm" method="post" action="../client/cancelOrder.htm">
                         <input type="hidden" name="orderID" id="cancelOrderID" />
                     </form>
@@ -388,26 +392,26 @@
         <script src="../assets/client/js/functions.js"></script>
 
         <script>
-                                       function confirmCancelOrder(orderId) {
-                                           Swal.fire({
-                                               title: 'Cancel Order?',
-                                               text: "Are you sure you want to cancel this order?",
-                                               icon: 'warning',
-                                               showCancelButton: true,
-                                               confirmButtonColor: '#d33',
-                                               cancelButtonColor: '#3085d6',
-                                               confirmButtonText: 'Yes',
-                                               cancelButtonText: 'No'
-                                           }).then((result) => {
-                                               if (result.isConfirmed) {
-                                                   document.getElementById("cancelOrderID").value = orderId;
-                                                   document.getElementById("cancelOrderForm").submit();
-                                               }
-                                           });
-                                       }
-                                       $(document).ready(function () {
-                                           $('.nestmart-carousel').slick();
-                                       });
+                   function confirmCancelOrder(orderId) {
+                       Swal.fire({
+                           title: 'Cancel Order?',
+                           text: "Are you sure you want to cancel this order?",
+                           icon: 'warning',
+                           showCancelButton: true,
+                           confirmButtonColor: '#d33',
+                           cancelButtonColor: '#3085d6',
+                           confirmButtonText: 'Yes',
+                           cancelButtonText: 'No'
+                       }).then((result) => {
+                           if (result.isConfirmed) {
+                               document.getElementById("cancelOrderID").value = orderId;
+                               document.getElementById("cancelOrderForm").submit();
+                           }
+                       });
+                   }
+                   $(document).ready(function () {
+                       $('.nestmart-carousel').slick();
+                   });
         </script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

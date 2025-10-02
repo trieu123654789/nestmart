@@ -705,7 +705,8 @@
                                                                 </h4>
                                                                 <p class="product-quantity">x${orderDetail.quantity}</p>
                                                                 <p class="product-price1">
-                                                                    <fmt:formatNumber value="${orderDetail.unitPrice}" type="number" maxFractionDigits="0" groupingUsed="true" />$
+                                                                    <fmt:formatNumber value="${orderDetail.unitPrice}" type="number" 
+                                                                                      minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
                                                                 </p>
                                                             </div>
 
@@ -715,7 +716,7 @@
                                                                         <a href="../client/productDetails.htm?productID=${orderDetail.product.productID}" 
                                                                            class="orange-outline-btn">Reorder</a>
                                                                         <a href="../client/feedback.htm?productID=${orderDetail.product.productID}" 
-                                                                           class="btn add-to-cart-btn"> Rating</a>
+                                                                           class="btn add-to-cart-btn">Rating</a>
                                                                     </c:if>
 
                                                                     <c:if test="${orderDetail.hasFeedback == true}">
@@ -725,25 +726,25 @@
                                                                            class="orange-outline-btn">View Rating</a>
                                                                     </c:if>
                                                                 </c:if>
-
-
                                                             </div>
-
                                                         </div>
                                                     </c:forEach>
 
                                                     <div class="order-footer">
-                                                        <span class="order-total1">Total: <span class="order-total"><fmt:formatNumber value="${order.totalAmount}" type="number" maxFractionDigits="0" groupingUsed="true" />$</span></span>
-
+                                                        <span class="order-total1">
+                                                            Total: <span class="order-total">
+                                                                <fmt:formatNumber value="${order.totalAmount}" type="number" 
+                                                                                  minFractionDigits="2" maxFractionDigits="2" groupingUsed="true" />$
+                                                            </span>
+                                                        </span>
                                                         <div class="order-actions">
                                                             <a href="../client/orderinfo.htm?order=${order.orderID}" 
                                                                class="red-outline-btn">Order info</a>
                                                         </div>
                                                     </div>
                                                 </div>
-
-
                                             </c:forEach>
+
 
                                         </div>
                                     </div>
@@ -762,8 +763,8 @@
 
         <a class="btn-scroll-top"><i class="nestmart-icon icon-left-arrow"></i></a>
 
-      
-       
+
+
         <script src="../assets/client/js/jquery-3.4.1.min.js"></script>
         <script src="../assets/client/js/bootstrap.min.js"></script>
         <script src="../assets/client/js/jquery.countdown.min.js"></script>
