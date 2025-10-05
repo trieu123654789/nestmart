@@ -193,7 +193,7 @@ public class EmailService {
             "                <p><strong>🛡️ Security Notice:</strong></p>\n" +
             "                <p>If you didn't request this password reset, please ignore this email. \n" +
             "                Your password will remain unchanged and your account stays secure.</p>\n" +
-            "                <p style=\"margin-top: 10px;\">This link will expire in 24 hours for your security.</p>\n" +
+            "                <p style=\"margin-top: 10px;\">This link will expire in 30 minutes for your security.</p>\n" +
             "            </div>\n" +
             "            \n" +
             "            <div class=\"divider\"></div>\n" +

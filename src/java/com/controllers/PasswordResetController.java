@@ -34,30 +34,29 @@ public class PasswordResetController {
 
     // Show form to input email for password reset
     @RequestMapping(value = "/forgotPassword", method = RequestMethod.GET)
-public String showForgotPasswordForm(HttpServletRequest request,
-                                     RedirectAttributes redirectAttributes) {
+    public String showForgotPasswordForm(HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
 
-    HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession(false);
 
-    if (session == null || session.getAttribute("role") == null) {
-        return "forgotPassword";
+        if (session == null || session.getAttribute("role") == null) {
+            return "forgotPassword";
+        }
+
+        Integer rolecheck = (Integer) session.getAttribute("role");
+
+        if (rolecheck == 1) {
+            return "redirect:/admin/changePassword.htm";
+        } else if (rolecheck == 2) {
+            return "redirect:/employee/changePassword.htm";
+        } else if (rolecheck == 3) {
+            return "redirect:/shipper/changePassword.htm";
+        } else if (rolecheck == 4) {
+            return "redirect:/client/changePassword.htm";
+        } else {
+            return "forgotPassword.htm";
+        }
     }
-
-    Integer rolecheck = (Integer) session.getAttribute("role");
-
-    if (rolecheck == 1) {
-        return "redirect:/admin/changePassword.htm";
-    } else if (rolecheck == 2) {
-        return "redirect:/employee/changePassword.htm";
-    } else if (rolecheck == 3) {
-        return "redirect:/shipper/changePassword.htm";
-    } else if (rolecheck == 4) {
-        return "redirect:/client/changePassword.htm";
-    } else {
-        return "forgotPassword.htm";
-    }
-}
-
 
     // Handle password reset request and send email with token
     @RequestMapping(value = "/forgotPassword.htm", method = RequestMethod.POST)
@@ -75,7 +74,7 @@ public String showForgotPasswordForm(HttpServletRequest request,
 
         tokenStore.put(token, tokenInfo);
 
-        String resetLink = "http://localhost:8080/nestmart/resetPassword.htm?token=" + token;
+        String resetLink = "https://nestmart.publicvm.com/nestmartappFinal/resetPassword.htm?token=" + token;
         emailService.sendResetPasswordEmail(email, resetLink);
 
         redirectAttributes.addFlashAttribute("message", "A password reset link has been sent to your email.");
